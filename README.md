@@ -90,7 +90,10 @@ python3 skills/ai-humanize/scripts/release_check.py
 ```
 
 Per-skill deterministic tools live under `skills/<name>/scripts/`. Release tags:
-`<skill-name>-vX.Y.Z` (see each skill's `VERSION` file).
+`<skill-name>-vX.Y.Z` (see each skill's `VERSION` file). Package ZIPs:
+`./scripts/package-releases.sh v1.0.0`
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) and [docs/](docs/).
 
 ## Compatibility
 
@@ -107,12 +110,3 @@ MIT — see [LICENSE](LICENSE). Per-skill licenses in `skills/*/LICENSE`.
 
 Downstream product value over star count. Built alongside
 [CometWeb Insight](https://cometweb.io) and the CometWeb agent toolchain.
-
-### Promotion & GTM
-
-Internal playbook (Evidence Researcher + CI + SEO + Council framing):
-[`docs/promotion-playbook.md`](docs/promotion-playbook.md) ·
-[`docs/GTM-COUNCIL-MEMO.md`](docs/GTM-COUNCIL-MEMO.md)
-
-**Council verdict:** GO gateway-first (Web App Auditor + Release v1.0.0), TEST Show HN week 3,
-DEFER leading with AI Council complexity.
