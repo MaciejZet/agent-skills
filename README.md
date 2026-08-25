@@ -73,6 +73,19 @@ question → Evidence Researcher → Evidence Pack → specialist / operator / C
 It does not issue GO/NO-GO or product priorities. Downstream skills apply their own
 gates to what they accept from an Evidence Pack.
 
+### How invocation works
+
+| Mechanism | What it does |
+| --- | --- |
+| **Routing rule** (`install-cursor.sh`) | Maps intent to the right skill from plain chat — `@` tags are optional |
+| **One primary skill per task** | Agent reads one `SKILL.md` first; other skills enter via CW-AIP handoff in the same thread, not automatic `@` chaining |
+| **Evidence Researcher** | Research and Evidence Pack only — does **not** auto-run AI Council, Release Readiness, or Product Operator |
+| **AI Council** | Explicit only — `@ai-council` or “przepuść przez Radę”; Council re-verifies decision-specific evidence even after research |
+
+Typical two-step flow for a strategic call: research with `@evidence-researcher`, then
+Council with `@ai-council` (or ask for both in one message — the agent should sequence
+them, not collapse research into a verdict).
+
 ## Skills (12)
 
 | Layer | Skill | Role |
