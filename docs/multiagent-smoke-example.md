@@ -54,6 +54,16 @@ Emit **Workflow result** only — no second research pass, no verdict without st
 
 Same goal with `@skill-orchestrator` in a separate chat to compare handoff clarity.
 
+---
+
+## Workflow 2 — audit register → release
+
+Goal: audit `app.cometweb.io/register`, then Release Readiness gate for EN production path.
+
+Result: **NO_GO** (blocker F-001 — EN svelte-i18n boot). Artifacts and summary:
+
+[`docs/demo/smoke-audit-register-workflow-result.md`](demo/smoke-audit-register-workflow-result.md)
+
 ## Hosts
 
 | Host | Install | Multiagent |
