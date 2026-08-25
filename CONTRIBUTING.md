@@ -12,9 +12,12 @@ tested skills** — not prompt volume.
 
 ## What does not belong here
 
-- GTM / promotion playbooks (private ops vault)
+- GTM / promotion playbooks, outreach calendars, “how to get stars” guides
+- Council or product **strategy memos** meant for internal GTM (use `personal/gtm-cometweb/`)
 - Secrets, Notion UUIDs, customer data
 - Bulk-generated skills without tests
+
+See [`AGENTS.md`](AGENTS.md) for the full public-vs-private split.
 
 ## Before a PR
 

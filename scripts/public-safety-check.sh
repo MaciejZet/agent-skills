@@ -21,6 +21,17 @@ if [[ -f skills/ai-council/references/notion-bindings.local.json ]]; then
   failures=1
 fi
 
+# GTM / promotion docs belong in personal/gtm-cometweb, not public OSS.
+while IFS= read -r f; do
+  base=$(basename "$f")
+  case "$base" in
+    *promotion-playbook*|*GTM-COUNCIL*|*KROKI-PROMOCJA*|*gtm-council-memo*)
+      echo "FAIL: GTM/promotion doc in public tree: $f — use personal/gtm-cometweb/" >&2
+      failures=1
+      ;;
+  esac
+done < <(find skills docs -type f \( -name '*.md' -o -name '*.mdc' \) 2>/dev/null)
+
 if [[ "$failures" -ne 0 ]]; then
   exit 1
 fi
