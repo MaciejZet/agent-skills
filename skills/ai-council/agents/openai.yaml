@@ -1,0 +1,13 @@
+interface:
+  display_name: AI Council
+  short_description: Always-current decision council with risk gates, forecasts and
+    living memory
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true
