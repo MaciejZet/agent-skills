@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cometweb.io/schemas/cw-aip/envelope-core.schema.json",
+  "title": "CW-AIP Envelope Core",
+  "type": "object",
+  "required": [
+    "id",
+    "type",
+    "producer",
+    "protocol_version",
+    "subject",
+    "as_of",
+    "status"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "type": {
+      "type": "string",
+      "enum": [
+        "artifact",
+        "evidence",
+        "finding",
+        "decision_handoff",
+        "specialist_handoff",
+        "snapshot_metadata"
+      ]
+    },
+    "producer": { "type": "string", "minLength": 1 },
+    "protocol_version": { "type": "string", "const": "1.0.0" },
+    "subject": { "type": "string", "minLength": 1 },
+    "as_of": { "type": "string", "minLength": 1 },
+    "status": { "type": "string", "minLength": 1 },
+    "dependencies": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": true
+}

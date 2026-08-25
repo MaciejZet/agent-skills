@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Public safety check
+        run: ./scripts/public-safety-check.sh
+
+      - name: Skill metadata and routing suite
+        run: |
+          python3 scripts/validate_skills.py
+          python3 scripts/run_routing_evals.py
+
+      - name: Compile Python modules
+        run: |
+          find skills -name '*.py' -print0 | xargs -0 python3 -m py_compile
+
+      - name: Install test dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Run skill test suites
+        run: ./scripts/run_all_tests.sh
+
+      - name: AI Humanize release check
+        run: python3 skills/ai-humanize/scripts/release_check.py

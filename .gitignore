@@ -2,5 +2,8 @@
 .idea/
 .vscode/
 *.log
+.venv/
+__pycache__/
+*.py[cod]
 .cursor/hooks/state/
 **/notion-bindings.local.json
