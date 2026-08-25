@@ -25,6 +25,16 @@ cd agent-skills
 
 Symlinks all skills to `~/.claude/skills/`. Restart Claude Code or start a new session, then invoke the skill by name.
 
+## Quick install (Codex)
+
+```bash
+git clone https://github.com/MaciejZet/agent-skills.git
+cd agent-skills
+./scripts/install-codex.sh
+```
+
+Symlinks all skills to `~/.codex/skills/`. Existing CometWeb skill **directories** there are replaced with symlinks to the repo. Restart Codex or start a new session.
+
 ## CometWeb centrum (Claude relative paths)
 
 ```bash

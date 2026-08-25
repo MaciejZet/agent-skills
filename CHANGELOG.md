@@ -4,6 +4,12 @@ All notable changes to the **CometWeb Agent Skills** bundle (public repo).
 
 Format follows [Keep a Changelog](https://keepachangelog.com/). Version tags: `vMAJOR.MINOR.PATCH`.
 
+## [1.0.5] - 2026-08-26
+
+### Added
+
+- [`scripts/install-codex.sh`](scripts/install-codex.sh) — symlink all skills to `~/.codex/skills/` (replaces stale skill directories)
+
 ## [1.0.4] - 2026-08-26
 
 ### Added

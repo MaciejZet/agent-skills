@@ -171,6 +171,7 @@ git clone https://github.com/MaciejZet/agent-skills.git
 cd agent-skills
 ./scripts/install-cursor.sh          # ~/.cursor/skills + routing rule
 ./scripts/install-claude.sh          # ~/.claude/skills (Claude Code)
+./scripts/install-codex.sh           # ~/.codex/skills (Codex)
 ./scripts/install-claude-centrum.sh  # CometWeb centrum .claude/skills
 ```
 
