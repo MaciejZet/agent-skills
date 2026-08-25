@@ -113,13 +113,13 @@ def frame_hero(fonts: dict) -> Image.Image:
     img, draw = canvas()
 
     logo = load_logo(96)
-    img.paste(logo, (W // 2 - 48, 72), logo)
-    wordmark_centered(draw, 188, fonts["display"])
+    img.paste(logo, (W // 2 - 48, 100), logo)
+    wordmark_centered(draw, 216, fonts["display"])
 
-    draw.text((W // 2, 236), "Web App Auditor", fill=TEXT2, font=fonts["title"], anchor="mm")
-    draw.text((W // 2, 278), "Evidence-driven QA for Cursor", fill=MUTED, font=fonts["body"], anchor="mm")
+    draw.text((W // 2, 278), "Web App Auditor", fill=TEXT2, font=fonts["title"], anchor="mm")
+    draw.text((W // 2, 318), "Evidence-driven QA for agents", fill=MUTED, font=fonts["body"], anchor="mm")
 
-    pill = (MARGIN + 80, 320, W - MARGIN - 80, 360)
+    pill = (MARGIN + 80, 356, W - MARGIN - 80, 396)
     rounded_rect(draw, pill, 16, CARD, outline=TRUST, width=2)
     text_center(draw, pill, "12 skills · protocol v1.1 · pytest + CI", fonts["small"], MINT)
 
@@ -163,21 +163,26 @@ def frame_finding(fonts: dict) -> Image.Image:
     card = (MARGIN, CONTENT_TOP + 24, W - MARGIN, CONTENT_BOTTOM - 24)
     rounded_rect(draw, card, 16, CARD, outline=ERROR, width=2)
 
-    badge = (MARGIN + 32, CONTENT_TOP + 48, MARGIN + 120, CONTENT_TOP + 80)
+    cx = W // 2
+    badge_w, badge_h = 96, 34
+    badge_y = CONTENT_TOP + 56
+    badge = (cx - badge_w // 2, badge_y, cx + badge_w // 2, badge_y + badge_h)
     rounded_rect(draw, badge, 8, ERROR)
     text_center(draw, badge, "MAJOR", fonts["section"], TEXT)
 
-    draw.text((MARGIN + 144, CONTENT_TOP + 52), "Invoice count mismatch", fill=TEXT, font=fonts["title"])
+    title_y = badge_y + badge_h + 28
+    draw.text((cx, title_y), "Invoice count mismatch", fill=TEXT, font=fonts["title"], anchor="mm")
 
-    body_y = CONTENT_TOP + 100
+    body_y = title_y + 40
     for line in (
         "Badge shows 4 invoices. Table lists 3 rows.",
         "Cross-check failed - reproducible with screenshot + DOM.",
     ):
-        draw.text((MARGIN + 32, body_y), line, fill=TEXT2, font=fonts["body"])
-        body_y += 32
+        draw.text((cx, body_y), line, fill=TEXT2, font=fonts["body"], anchor="mm")
+        body_y += 30
 
-    proof = (MARGIN + 32, body_y + 24, W - MARGIN - 32, body_y + 88)
+    proof_h = 52
+    proof = (MARGIN + 48, body_y + 28, W - MARGIN - 48, body_y + 28 + proof_h)
     rounded_rect(draw, proof, 12, BG2, outline=TRUST, width=2)
     text_center(draw, proof, "badge_count=4   table_rows=3   confidence=HIGH", fonts["mono"], MINT)
     return img
@@ -187,16 +192,17 @@ def frame_install(fonts: dict) -> Image.Image:
     img, draw = canvas()
 
     logo = load_logo(72)
-    img.paste(logo, (W // 2 - 36, 80), logo)
-    wordmark_centered(draw, 168, fonts["title"])
+    img.paste(logo, (W // 2 - 36, 88), logo)
+    wordmark_centered(draw, 176, fonts["title"])
 
-    draw.text((W // 2, 220), "Install in Cursor", fill=TEXT2, font=fonts["section"], anchor="mm")
+    draw.text((W // 2, 228), "Quick install", fill=TEXT2, font=fonts["section"], anchor="mm")
+    draw.text((W // 2, 258), "Cursor · ChatGPT · Codex", fill=MUTED, font=fonts["small"], anchor="mm")
 
-    cmd = (MARGIN + 48, 260, W - MARGIN - 48, 312)
+    cmd = (MARGIN + 48, 288, W - MARGIN - 48, 340)
     rounded_rect(draw, cmd, 14, CARD, outline=MINT, width=2)
     text_center(draw, cmd, "./scripts/install-cursor.sh", fonts["mono"], MINT)
 
-    draw.text((W // 2, 352), "Web App Auditor + 11 more skills", fill=MUTED, font=fonts["body"], anchor="mm")
+    draw.text((W // 2, 372), "Web App Auditor + 11 more skills", fill=MUTED, font=fonts["body"], anchor="mm")
     draw.text((W // 2, CONTENT_BOTTOM - 8), "CometWeb Labs · cometweb.io", fill=MUTED, font=fonts["small"], anchor="mm")
     return img
 
