@@ -5,10 +5,19 @@ standalone skills with deterministic kernels, evidence contracts, and cross-skil
 handoffs. Each folder under `skills/` ships a `SKILL.md` entrypoint.
 
 [![CI](https://github.com/MaciejZet/agent-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/MaciejZet/agent-skills/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/MaciejZet/agent-skills?label=release)](https://github.com/MaciejZet/agent-skills/releases/tag/v1.0.0)
+[![Release](https://img.shields.io/github/v/release/MaciejZet/agent-skills?label=release)](https://github.com/MaciejZet/agent-skills/releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ![Web App Auditor demo](docs/demo/web-app-auditor-demo.gif)
+
+## Start here
+
+1. **Install** — [`INSTALL.md`](INSTALL.md) or `./scripts/install-cursor.sh`
+2. **Try** — `@web-app-auditor` (evidence-driven QA; best first skill)
+3. **Download** — [Latest release ZIPs](https://github.com/MaciejZet/agent-skills/releases/latest)
+4. **Ask** — [GitHub Discussions](https://github.com/MaciejZet/agent-skills/discussions)
+
+Sample audit report: [`docs/demo/sample-audit-report.json`](docs/demo/sample-audit-report.json)
 
 ## Problem
 
@@ -58,6 +67,8 @@ and specialist handoffs — without treating a closed Notion task as shipped pro
 
 ## Install
 
+See **[INSTALL.md](INSTALL.md)** for Cursor, Claude centrum, single-skill symlinks, and ZIP downloads.
+
 ```bash
 git clone https://github.com/MaciejZet/agent-skills.git
 cd agent-skills
@@ -94,9 +105,9 @@ python3 skills/ai-humanize/scripts/release_check.py
 
 Per-skill deterministic tools live under `skills/<name>/scripts/`. Release tags:
 `<skill-name>-vX.Y.Z` (see each skill's `VERSION` file). Package ZIPs:
-`./scripts/package-releases.sh v1.0.0`
+`./scripts/package-releases.sh v1.0.1`
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) and [docs/](docs/).
+See [INSTALL.md](INSTALL.md), [CHANGELOG.md](CHANGELOG.md), [CONTRIBUTING.md](CONTRIBUTING.md), and [docs/](docs/).
 
 ## Compatibility
 

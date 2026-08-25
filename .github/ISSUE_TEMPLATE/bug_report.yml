@@ -1,0 +1,48 @@
+name: Bug report
+description: Validator, script, routing, or CI failure
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: skill
+    attributes:
+      label: Skill
+      options:
+        - web-app-auditor
+        - product-operator
+        - evidence-researcher
+        - release-readiness
+        - repo-to-roadmap
+        - ai-council
+        - ai-humanize
+        - seo-geo-aeo-maxxing
+        - competitive-intelligence
+        - customer-ops
+        - design-partner-finder
+        - product-teardown
+        - repo / CI / install scripts
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: Command, input file, or @skill invocation
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Release or skill VERSION
+      placeholder: v1.0.1 or skills/web-app-auditor/VERSION

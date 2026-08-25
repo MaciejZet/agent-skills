@@ -28,11 +28,16 @@ for skill_dir in "$ROOT"/skills/*/; do
   echo "created $OUT/$zip_name"
 done
 
-# Bundle all skills
+# Bundle all skills + install path
 (
   cd "$ROOT"
-  zip -qr "$OUT/cometweb-agent-skills-${TAG#v}.zip" skills protocol evals \
-    -x "skills/**/__pycache__/*" -x "**/.DS_Store"
+  zip -qr "$OUT/cometweb-agent-skills-${TAG#v}.zip" \
+    skills protocol evals scripts docs/demo \
+    README.md INSTALL.md CHANGELOG.md LICENSE NOTICE CONTRIBUTING.md VERSION \
+    -x "skills/**/__pycache__/*" \
+    -x "docs/demo/preview/*" \
+    -x "docs/demo/assets/*.ttf" \
+    -x "**/.DS_Store"
 )
 echo "created $OUT/cometweb-agent-skills-${TAG#v}.zip"
 echo "OK: $(ls -1 "$OUT"/*.zip | wc -l | tr -d ' ') archives in $OUT"

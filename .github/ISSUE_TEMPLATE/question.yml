@@ -1,0 +1,28 @@
+name: Question
+description: Install, routing, or how to use a skill
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Prefer [Discussions](https://github.com/MaciejZet/agent-skills/discussions) for open Q&A.
+        Use this issue for something that looks like a confirmed bug after triage.
+  - type: dropdown
+    id: skill
+    attributes:
+      label: Skill (if any)
+      options:
+        - Not sure / install
+        - web-app-auditor
+        - product-operator
+        - evidence-researcher
+        - release-readiness
+        - repo-to-roadmap
+        - ai-council
+        - other
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+    validations:
+      required: true
