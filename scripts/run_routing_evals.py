@@ -128,6 +128,14 @@ SIGNALS: dict[str, list[tuple[int, str]]] = {
         (8, r"audit.*(then|→|->|potem).*(release|ship|readiness)"),
         (7, r"help me pick.*skill"),
     ],
+    "skill-orchestrator-multiagent": [
+        (20, r"one subagent per skill|subagent per step"),
+        (12, r"skill-orchestrator-multiagent|@skill-orchestrator-multiagent"),
+        (12, r"\bmultiagent\b|\bmulti-agent\b|\bmulti agent\b"),
+        (11, r"separate agent per skill|one agent per skill|osobn(y|e) agent"),
+        (10, r"wymus.*subagent|wymus.*agent"),
+        (9, r"multiagent.*orchestrat|orchestrat.*multiagent"),
+    ],
 }
 
 

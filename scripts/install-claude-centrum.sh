@@ -21,6 +21,7 @@ SKILLS=(
   repo-to-roadmap
   seo-geo-aeo-maxxing
   skill-orchestrator
+  skill-orchestrator-multiagent
   web-app-auditor
 )
 

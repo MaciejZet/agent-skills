@@ -569,6 +569,38 @@
       "allowed_secondary_skills": ["product-operator"],
       "must_not_trigger": ["repo-to-roadmap", "ai-council"],
       "reason": "Skill-selection meta question; orchestrator routes to operator"
+    },
+    {
+      "id": "multiagent-evidence-council",
+      "prompt": "Multiagent: verify pricing claims with separate agents, then Council GO/NO-GO.",
+      "expected_primary_skill": "skill-orchestrator-multiagent",
+      "allowed_secondary_skills": ["evidence-researcher", "ai-council"],
+      "must_not_trigger": ["skill-orchestrator"],
+      "reason": "Explicit multiagent + subagent separation"
+    },
+    {
+      "id": "multiagent-audit-release",
+      "prompt": "One subagent per skill: web app audit then release readiness RC 1.2.0 staging.",
+      "expected_primary_skill": "skill-orchestrator-multiagent",
+      "allowed_secondary_skills": ["web-app-auditor", "release-readiness"],
+      "must_not_trigger": ["skill-orchestrator"],
+      "reason": "Task-per-step execution model"
+    },
+    {
+      "id": "multiagent-not-single-thread",
+      "prompt": "@skill-orchestrator-multiagent — isolated subagent per specialist for EU AI Act research then Rada.",
+      "expected_primary_skill": "skill-orchestrator-multiagent",
+      "allowed_secondary_skills": ["evidence-researcher", "ai-council"],
+      "must_not_trigger": [],
+      "reason": "Tagged multiagent variant"
+    },
+    {
+      "id": "orchestrator-not-multiagent-default",
+      "prompt": "Orchestrate evidence then Council on pricing — single workflow.",
+      "expected_primary_skill": "skill-orchestrator",
+      "allowed_secondary_skills": ["evidence-researcher", "ai-council"],
+      "must_not_trigger": ["skill-orchestrator-multiagent"],
+      "reason": "Default orchestrator when multiagent not requested"
     }
   ]
 }

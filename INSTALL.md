@@ -1,6 +1,6 @@
 # Install CometWeb Agent Skills
 
-Twelve standalone skills for **Cursor**, **Claude Code**, **ChatGPT**, **Codex**, and compatible hosts, plus **Skill Orchestrator** for multi-step workflows.
+Twelve standalone skills for **Cursor**, **Claude Code**, **ChatGPT**, **Codex**, and compatible hosts, plus **Skill Orchestrator** (single thread) and **Skill Orchestrator Multiagent** (Task per step).
 
 ## Quick install (Cursor)
 

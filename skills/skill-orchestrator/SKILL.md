@@ -117,3 +117,9 @@ Minimum sections:
 4. **CW-AIP handoff block** — JSON or structured list of envelope metadata when useful
 
 Never fold Evidence Researcher synthesis into a Council GO/NO-GO in the same step.
+
+## Multiagent variant
+
+For **one isolated subagent per skill** (Cursor Task / subagent API), use
+`skill-orchestrator-multiagent` instead. Same plan kernel; parent thread only plans
+and merges — each specialist runs in its own subagent.

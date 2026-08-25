@@ -4,6 +4,17 @@ All notable changes to the **CometWeb Agent Skills** bundle (public repo).
 
 Format follows [Keep a Changelog](https://keepachangelog.com/). Version tags: `vMAJOR.MINOR.PATCH`.
 
+## [1.0.4] - 2026-08-26
+
+### Added
+
+- [`skills/skill-orchestrator-multiagent`](skills/skill-orchestrator-multiagent) — one subagent per specialist (Task API); `orchestrate_multiagent_kernel.py`
+
+### Changed
+
+- Routing rule distinguishes single-thread vs multiagent orchestrator
+- `skill-orchestrator` cross-links multiagent variant
+
 ## [1.0.3] - 2026-08-26
 
 ### Added
