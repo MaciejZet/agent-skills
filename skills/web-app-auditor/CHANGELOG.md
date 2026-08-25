@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.1
+
+- Added `tests/test_validate_report.py` — golden fixtures plus invariant regression cases.
+- Added `extras/cursor-rule.mdc` for Cursor routing.
+
 ## 1.1
 
 - Added environment-aware mutation safety; production/unknown default read-only.

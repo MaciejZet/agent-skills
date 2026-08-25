@@ -57,7 +57,14 @@ and specialist handoffs — without treating a closed Notion task as shipped pro
 
 ```bash
 git clone https://github.com/MaciejZet/agent-skills.git
-# Symlink or copy skills/<name> into your agent skills path
+cd agent-skills
+./scripts/install-cursor.sh          # ~/.cursor/skills + routing rule
+./scripts/install-claude-centrum.sh  # CometWeb centrum .claude/skills
+```
+
+Manual symlink:
+
+```bash
 ln -s "$(pwd)/skills/product-operator" ~/.cursor/skills/product-operator
 ```
 
