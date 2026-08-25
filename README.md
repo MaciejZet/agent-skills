@@ -107,3 +107,12 @@ MIT — see [LICENSE](LICENSE). Per-skill licenses in `skills/*/LICENSE`.
 
 Downstream product value over star count. Built alongside
 [CometWeb Insight](https://cometweb.io) and the CometWeb agent toolchain.
+
+### Promotion & GTM
+
+Internal playbook (Evidence Researcher + CI + SEO + Council framing):
+[`docs/promotion-playbook.md`](docs/promotion-playbook.md) ·
+[`docs/GTM-COUNCIL-MEMO.md`](docs/GTM-COUNCIL-MEMO.md)
+
+**Council verdict:** GO gateway-first (Web App Auditor + Release v1.0.0), TEST Show HN week 3,
+DEFER leading with AI Council complexity.
