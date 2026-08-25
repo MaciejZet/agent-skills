@@ -4,6 +4,17 @@ All notable changes to the **CometWeb Agent Skills** bundle (public repo).
 
 Format follows [Keep a Changelog](https://keepachangelog.com/). Version tags: `vMAJOR.MINOR.PATCH`.
 
+## [1.0.3] - 2026-08-26
+
+### Added
+
+- [`skills/skill-orchestrator`](skills/skill-orchestrator) — multi-skill workflow planning and CW-AIP sequencing (`orchestrate_kernel.py`, routing eval cases)
+
+### Changed
+
+- README and routing rule document orchestrator as single entry for evidence → Council and similar chains
+- Install scripts install 13 skills
+
 ## [1.0.2] - 2026-08-26
 
 ### Added

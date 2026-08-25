@@ -529,6 +529,46 @@
       "allowed_secondary_skills": ["release-readiness"],
       "must_not_trigger": ["product-operator"],
       "reason": "Whole-platform gap question without pinned RC"
+    },
+    {
+      "id": "orchestrator-evidence-then-council",
+      "prompt": "Verify EU AI Act claims first, then run Council on our roadmap impact.",
+      "expected_primary_skill": "skill-orchestrator",
+      "allowed_secondary_skills": ["evidence-researcher", "ai-council"],
+      "must_not_trigger": ["product-operator"],
+      "reason": "Explicit multi-step sequence; orchestrator owns plan and handoffs"
+    },
+    {
+      "id": "orchestrator-audit-then-release",
+      "prompt": "Orchestrate: web app audit then release readiness for RC 1.2.0 on staging.",
+      "expected_primary_skill": "skill-orchestrator",
+      "allowed_secondary_skills": ["web-app-auditor", "release-readiness"],
+      "must_not_trigger": ["ai-council", "repo-to-roadmap"],
+      "reason": "Two-step QA → gate workflow with pinned RC"
+    },
+    {
+      "id": "orchestrator-full-workflow",
+      "prompt": "Run the full CometWeb workflow — evidence on pricing claims then Council GO/NO-GO.",
+      "expected_primary_skill": "skill-orchestrator",
+      "allowed_secondary_skills": ["evidence-researcher", "ai-council"],
+      "must_not_trigger": ["product-operator"],
+      "reason": "End-to-end orchestration entry point"
+    },
+    {
+      "id": "orchestrator-not-single-evidence",
+      "prompt": "Chain skills: research vendor claims and decide via Council.",
+      "expected_primary_skill": "skill-orchestrator",
+      "allowed_secondary_skills": ["evidence-researcher", "ai-council"],
+      "must_not_trigger": [],
+      "reason": "Chain keyword + decision implies orchestrator not ER alone"
+    },
+    {
+      "id": "orchestrator-disambiguate-weekly",
+      "prompt": "Which CometWeb skill should I use for our weekly product review?",
+      "expected_primary_skill": "skill-orchestrator",
+      "allowed_secondary_skills": ["product-operator"],
+      "must_not_trigger": ["repo-to-roadmap", "ai-council"],
+      "reason": "Skill-selection meta question; orchestrator routes to operator"
     }
   ]
 }

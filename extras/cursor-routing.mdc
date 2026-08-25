@@ -1,17 +1,20 @@
 ---
-description: Route CometWeb Agent Skills — 12-skill evidence-driven operating system. Use when product, research, QA, release, customer, or strategic work needs the right specialist skill.
+description: Route CometWeb Agent Skills — 13-skill evidence-driven operating system. Use when product, research, QA, release, customer, or strategic work needs the right specialist skill.
 alwaysApply: true
 ---
 
 # CometWeb Agent Skills routing
 
 Load skills from `~/.cursor/skills/` (symlinked from `platforms/agent-skills`). Prefer
-**one primary skill** per turn; hand off via CW-AIP envelopes when outputs feed another skill.
+**one primary skill** per turn unless the user wants a multi-step workflow — then use
+`skill-orchestrator`. Hand off via CW-AIP envelopes when outputs feed another skill.
 
 ## Primary routing
 
 | Intent | Skill |
 | --- | --- |
+| Multi-skill workflow / sequence (evidence → Council, audit → release, end-to-end) | `skill-orchestrator` |
+| Multi-skill workflow / sequence evidence → Council / audit → release / end-to-end | `skill-orchestrator` |
 | Whole repo/project → baseline roadmap to target state | `repo-to-roadmap` |
 | Weekly control loop on existing roadmap/state | `product-operator` |
 | Pinned RC/build + environment → GO/NO_GO/DEFER | `release-readiness` |
@@ -32,6 +35,8 @@ Load skills from `~/.cursor/skills/` (symlinked from `platforms/agent-skills`). 
 - **Release Readiness** — requires identifiable release candidate + environment; score never overrides gates.
 - **AI Council** — explicit invocation only; not routine research or triage.
 - **Evidence Researcher** — upstream of decisions; never issues GO/NO_GO alone.
+- **Skill Orchestrator** — sequences specialists with CW-AIP; does not replace domain skills or Council policy.
+- **Skill Orchestrator** — sequences specialists with CW-AIP; does not replace domain skills or Council policy.
 
 ## Execution
 

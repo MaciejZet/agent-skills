@@ -114,6 +114,20 @@ SIGNALS: dict[str, list[tuple[int, str]]] = {
         (9, r"remove ai tells|invisible unicode|deep rewrite"),
         (5, r"fix typos"),
     ],
+    "skill-orchestrator": [
+        (10, r"skill orchestrator|@skill-orchestrator"),
+        (11, r"\borchestrat(e|:|\b)"),
+        (10, r"orchestrat.*skill|sequence.*skill|multi.?step workflow"),
+        (10, r"verify.*then run council|claims first.*then.*council"),
+        (10, r"then run council|research.*then.*council"),
+        (10, r"evidence.*(then|→|->|potem).*(council|rad[ęe])"),
+        (10, r"which cometweb skill|which skill should I use"),
+        (9, r"full workflow|end.to.end|ca[łl][yąa] workflow"),
+        (9, r"zr[oó]b wszystko|od researchu do (decyzji|rady)"),
+        (9, r"chain.*skill|run everything needed"),
+        (8, r"audit.*(then|→|->|potem).*(release|ship|readiness)"),
+        (7, r"help me pick.*skill"),
+    ],
 }
 
 

@@ -22,6 +22,7 @@ SKILL_NAMES = {
     "release-readiness",
     "repo-to-roadmap",
     "seo-geo-aeo-maxxing",
+    "skill-orchestrator",
     "web-app-auditor",
 }
 FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---", re.DOTALL)

@@ -1,7 +1,7 @@
 # CometWeb Agent Skills
 
-Twelve standalone skills from [CometWeb Labs](https://cometweb.io). Each folder under
-`skills/` ships a `SKILL.md` entrypoint plus scripts, schemas, and tests where a claim
+Twelve standalone skills from [CometWeb Labs](https://cometweb.io), plus **Skill Orchestrator**
+for multi-step workflows. Each folder under `skills/` ships a `SKILL.md` entrypoint plus scripts, schemas, and tests where a claim
 must hold in code—not only in prose.
 
 [![CI](https://github.com/MaciejZet/agent-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/MaciejZet/agent-skills/actions/workflows/ci.yml)
@@ -77,19 +77,23 @@ gates to what they accept from an Evidence Pack.
 
 | Mechanism | What it does |
 | --- | --- |
-| **Routing rule** (`install-cursor.sh`) | Maps intent to the right skill from plain chat — `@` tags are optional |
-| **One primary skill per task** | Agent reads one `SKILL.md` first; other skills enter via CW-AIP handoff in the same thread, not automatic `@` chaining |
-| **Evidence Researcher** | Research and Evidence Pack only — does **not** auto-run AI Council, Release Readiness, or Product Operator |
-| **AI Council** | Explicit only — `@ai-council` or “przepuść przez Radę”; Council re-verifies decision-specific evidence even after research |
+| **`@skill-orchestrator`** | One entry for multi-step flows — plans and runs evidence → Council, audit → release, etc. |
+| **Routing rule** (`install-cursor.sh`) | Maps intent from plain chat when you skip `@` tags |
+| **Single specialist** | `@web-app-auditor`, `@product-operator`, … when one domain is enough |
+| **Evidence Researcher alone** | Evidence Pack only — no GO/NO-GO, no auto-Council |
+| **AI Council alone** | Explicit decision — re-verifies evidence even after research |
 
-Typical two-step flow for a strategic call: research with `@evidence-researcher`, then
-Council with `@ai-council` (or ask for both in one message — the agent should sequence
-them, not collapse research into a verdict).
+Example — one tag, full strategic flow:
 
-## Skills (12)
+```text
+@skill-orchestrator — Verify our pricing claims, then Council on GO/NO-GO for the new tier.
+```
+
+## Skills (13)
 
 | Layer | Skill | Role |
 | --- | --- | --- |
+| Orchestration | [Skill Orchestrator](skills/skill-orchestrator) | Multi-skill sequences with CW-AIP handoffs; loads each step's SKILL.md in order |
 | Evidence | [Evidence Researcher](skills/evidence-researcher) | Atomic claims, source lineage, falsifiers, freshness; Evidence Pack output; no decisions |
 | Intelligence | [Competitive Intelligence](skills/competitive-intelligence) | Observation → normalized state → delta → implication; resists headline overreach |
 | Intelligence | [Product Teardown](skills/product-teardown) | Transferable patterns from external products; ADOPT requires destination-side evidence |
@@ -112,7 +116,7 @@ them, not collapse research into a verdict).
 | Is **this build/RC** safe to ship to **this environment**? | **Release Readiness** | Requires pinned artifact + environment; gate verdict |
 
 Ambiguous prompts like “analyze the repo for production readiness” are covered in
-[`evals/routing/suite.json`](evals/routing/suite.json) (66 cases). Run:
+[`evals/routing/suite.json`](evals/routing/suite.json) (71 cases). Run:
 
 ```bash
 python3 scripts/run_routing_evals.py
@@ -197,8 +201,8 @@ Example chains the protocol supports:
 ./scripts/run_all_checks.sh           # safety + validate + routing + pytest + release_check
 ./scripts/public-safety-check.sh    # no leaked Notion IDs in OSS tree
 python3 scripts/validate_skills.py    # metadata + routing suite shape
-python3 scripts/run_routing_evals.py  # 66 routing cases
-./scripts/run_all_tests.sh            # 327+ unit tests across skills
+python3 scripts/run_routing_evals.py  # 71 routing cases
+./scripts/run_all_tests.sh            # 332+ unit tests across skills
 ```
 
 Per-skill tools live under `skills/<name>/scripts/`. Bundle releases:

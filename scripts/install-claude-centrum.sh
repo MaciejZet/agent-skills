@@ -20,6 +20,7 @@ SKILLS=(
   release-readiness
   repo-to-roadmap
   seo-geo-aeo-maxxing
+  skill-orchestrator
   web-app-auditor
 )
 
