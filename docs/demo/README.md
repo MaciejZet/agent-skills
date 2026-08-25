@@ -16,8 +16,11 @@ python skills/web-app-auditor/scripts/validate_report.py docs/demo/sample-audit-
 Regenerate GIF after copy changes:
 
 ```bash
-source .venv/bin/activate && pip install pillow
+source .venv/bin/activate
+pip install pillow cairosvg
 python scripts/generate-demo-gif.py
 ```
 
-Note: the GIF illustrates the **audit protocol output**, not a screen recording of Cursor IDE.
+Branding assets live in [`assets/`](./assets/) (CometWeb logo SVG, Nunito Sans). Colors match `platforms/cometweb-io` tokens (`--cw-energy-mint`, `--cw-depth-green`, etc.).
+
+Note: the GIF illustrates the **audit protocol and CometWeb brand**, not a screen recording of Cursor IDE.
