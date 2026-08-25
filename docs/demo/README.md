@@ -5,7 +5,7 @@ Public demo for GitHub README and social posts (no GTM strategy here).
 | File | Description |
 | --- | --- |
 | [sample-audit-report.json](./sample-audit-report.json) | Valid v1.1 audit report fixture |
-| [web-app-auditor-demo.gif](./web-app-auditor-demo.gif) | Animated walkthrough of scope → finding → validator |
+| [web-app-auditor-demo.gif](./web-app-auditor-demo.gif) | 4-frame intro: hero, flow, sample finding, install (~40 KB) |
 
 Validate the JSON locally:
 
