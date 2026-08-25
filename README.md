@@ -5,7 +5,10 @@ standalone skills with deterministic kernels, evidence contracts, and cross-skil
 handoffs. Each folder under `skills/` ships a `SKILL.md` entrypoint.
 
 [![CI](https://github.com/MaciejZet/agent-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/MaciejZet/agent-skills/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/MaciejZet/agent-skills?label=release)](https://github.com/MaciejZet/agent-skills/releases/tag/v1.0.0)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+![Web App Auditor demo](docs/demo/web-app-auditor-demo.gif)
 
 ## Problem
 

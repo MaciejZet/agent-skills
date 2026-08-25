@@ -4,6 +4,8 @@
 *.log
 .venv/
 __pycache__/
+dist/
+docs/demo/frame-*.png
 *.py[cod]
 .cursor/hooks/state/
 **/notion-bindings.local.json
