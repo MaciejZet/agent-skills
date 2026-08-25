@@ -1,8 +1,8 @@
 # CometWeb Agent Skills
 
-Public agent operating system from [CometWeb Labs](https://cometweb.io): twelve
-standalone skills with deterministic kernels, evidence contracts, and cross-skill
-handoffs. Each folder under `skills/` ships a `SKILL.md` entrypoint.
+Twelve standalone skills from [CometWeb Labs](https://cometweb.io). Each folder under
+`skills/` ships a `SKILL.md` entrypoint plus scripts, schemas, and tests where a claim
+must hold in code—not only in prose.
 
 [![CI](https://github.com/MaciejZet/agent-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/MaciejZet/agent-skills/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/MaciejZet/agent-skills?label=release)](https://github.com/MaciejZet/agent-skills/releases/latest)
@@ -12,74 +12,152 @@ handoffs. Each folder under `skills/` ships a `SKILL.md` entrypoint.
 
 ## Start here
 
-1. **Install** — [`INSTALL.md`](INSTALL.md) or `./scripts/install-cursor.sh`
-2. **Try** — `@web-app-auditor` (evidence-driven QA; best first skill)
-3. **Download** — [Latest release ZIPs](https://github.com/MaciejZet/agent-skills/releases/latest)
-4. **Ask** — [GitHub Discussions](https://github.com/MaciejZet/agent-skills/discussions)
+1. **Install** — [`INSTALL.md`](INSTALL.md): Cursor, Claude Code, or ZIP from [Releases](https://github.com/MaciejZet/agent-skills/releases/latest)
+2. **First skill** — `@web-app-auditor` (evidence-backed QA; smallest useful demo)
+3. **Questions** — [GitHub Discussions](https://github.com/MaciejZet/agent-skills/discussions)
 
 Sample audit report: [`docs/demo/sample-audit-report.json`](docs/demo/sample-audit-report.json)
 
-## Problem
+## Architecture
 
-Agent skills often collapse into long prompts. CometWeb skills push **truth into
-code**: registries, validators, invariant guards, scoring kernels, freshness gates,
-and test harnesses — with LLM orchestration on top.
+Twelve skills that can run alone, but share one evidence and handoff model (CW-AIP v1).
+Typical flow:
+
+```text
+                         EVIDENCE
+                ┌─────────────────────┐
+                │ Evidence Researcher │
+                └──────────┬──────────┘
+                           │
+        ┌──────────────────┼──────────────────┐
+        │                  │                  │
+        ▼                  ▼                  ▼
+ Competitive        Product Teardown   Design Partner
+ Intelligence                              Finder
+        │                  │                  │
+        └──────────────────┼──────────────────┘
+                           ▼
+                    Product Operator
+                           │
+             ┌─────────────┼─────────────┐
+             ▼             ▼             ▼
+       Customer Ops  Repo to Roadmap  Specialists
+                                      │
+                         ┌────────────┴────────────┐
+                         ▼                         ▼
+                Web App Auditor           SEO / GEO / AEO
+                         │
+                         └──────────┬──────────────┘
+                                    ▼
+                          Release Readiness
+                                    │
+                                    ▼
+                              AI Council
+                                    │
+                                    ▼
+                              decision / action
+
+                     AI Humanize → communication layer
+```
+
+Real work loops back and branches; the diagram shows default dependencies, not a
+single pipeline.
+
+### Evidence before decisions
+
+```text
+question → Evidence Researcher → Evidence Pack → specialist / operator / Council → action
+```
+
+**Evidence Researcher** builds auditable claim/source/evidence graphs and stops there.
+It does not issue GO/NO-GO or product priorities. Downstream skills apply their own
+gates to what they accept from an Evidence Pack.
 
 ## Skills (12)
 
 | Layer | Skill | Role |
 | --- | --- | --- |
-| Evidence | [Evidence Researcher](skills/evidence-researcher) | Claim/source/evidence packs; no decisions |
-| Intelligence | [Competitive Intelligence](skills/competitive-intelligence) | Temporal competitor state + delta |
-| Intelligence | [Product Teardown](skills/product-teardown) | External pattern → target adaptation |
-| Intelligence | [Design Partner Finder](skills/design-partner-finder) | Design partner program, not lead gen |
-| Product | [Repo to Roadmap](skills/repo-to-roadmap) | Whole-project baseline → roadmap |
-| Product | [Product Operator](skills/product-operator) | Control loop: what to do next |
-| Customer | [Customer Ops](skills/customer-ops) | Support → incident → engineering loop |
-| Quality | [Web App Auditor](skills/web-app-auditor) | Evidence-driven click-through QA |
-| Quality | [SEO GEO AEO Maxxing](skills/seo-geo-aeo-maxxing) | Search + AI visibility audit |
-| Release | [Release Readiness](skills/release-readiness) | RC-specific GO / NO_GO / DEFER gate |
-| Decision | [AI Council](skills/ai-council) | Multi-expert consequential decisions |
-| Writing | [AI Humanize](skills/ai-humanize) | Voice-preserving prose editing |
+| Evidence | [Evidence Researcher](skills/evidence-researcher) | Atomic claims, source lineage, falsifiers, freshness; Evidence Pack output; no decisions |
+| Intelligence | [Competitive Intelligence](skills/competitive-intelligence) | Observation → normalized state → delta → implication; resists headline overreach |
+| Intelligence | [Product Teardown](skills/product-teardown) | Transferable patterns from external products; ADOPT requires destination-side evidence |
+| Intelligence | [Design Partner Finder](skills/design-partner-finder) | Design partner cohorts and learning contracts—not lead-gen prospecting |
+| Product | [Repo to Roadmap](skills/repo-to-roadmap) | Whole-project baseline: topology, gaps, roadmap to a target state |
+| Product | [Product Operator](skills/product-operator) | Weekly control loop on existing roadmap/state; lifecycle through Outcome |
+| Customer | [Customer Ops](skills/customer-ops) | Support → incident → engineering handoff; closed ticket ≠ verified resolution |
+| Quality | [Web App Auditor](skills/web-app-auditor) | Click-through QA with findings, evidence, and a validated report schema |
+| Quality | [SEO GEO AEO Maxxing](skills/seo-geo-aeo-maxxing) | Live-verified search and AI-surface visibility audits |
+| Release | [Release Readiness](skills/release-readiness) | Pinned RC/build + environment → GO / NO_GO / DEFER; score cannot override gates |
+| Decision | [AI Council](skills/ai-council) | Multi-expert material decisions; **explicit invocation only** |
+| Writing | [AI Humanize](skills/ai-humanize) | EN/PL prose editing with semantic-fidelity and invariant guards |
 
-### Routing quick guide
+### Routing: three skills people confuse
+
+| If the user asks… | Primary skill | Why |
+| --- | --- | --- |
+| Analyze the whole repo and map the path to a **target state** | **Repo to Roadmap** | Baseline and gap inventory, not a weekly sprint |
+| We **already have** a roadmap—what should we do **this week**? | **Product Operator** | Control loop on current state and drift |
+| Is **this build/RC** safe to ship to **this environment**? | **Release Readiness** | Requires pinned artifact + environment; gate verdict |
+
+Ambiguous prompts like “analyze the repo for production readiness” are covered in
+[`evals/routing/suite.json`](evals/routing/suite.json) (66 cases). Run:
+
+```bash
+python3 scripts/run_routing_evals.py
+```
+
+Other common routes:
 
 | User intent | Primary skill |
 | --- | --- |
-| Analyze whole repo → roadmap to target state | **Repo to Roadmap** |
-| Weekly “what next?” on existing roadmap/state | **Product Operator** |
-| Pin a build/RC → production gate | **Release Readiness** |
 | Verify claims → Evidence Pack | **Evidence Researcher** |
 | Strategic GO/NO-GO / “przepuść przez Radę” | **AI Council** (explicit) |
 
-See [`evals/routing/suite.json`](evals/routing/suite.json) for cross-skill routing cases.
+## Example invocations
 
-## Example invocation
+**Product Operator** — weekly reconciliation:
 
 ```text
-@Product Operator — reconcile GitHub + Notion for Insight. What are BLOCKER
+@product-operator — reconcile GitHub + Notion for Insight. What are BLOCKER
 and VERIFY NOW items this week?
 ```
 
-The skill returns bounded actions with lifecycle states
-(`Intent → Planned → Implemented → Verified → Shipped → Outcome`), drift flags,
-and specialist handoffs — without treating a closed Notion task as shipped proof.
+Lifecycle states stay separate: `Intent → Planned → Implemented → Verified → Shipped → Outcome`.
+A closed Notion task is not shipped proof.
+
+**Web App Auditor** — bounded QA:
+
+```text
+@web-app-auditor — audit cometweb.io/pricing, area mode, standard depth.
+```
+
+**Release Readiness** — pinned candidate only:
+
+```text
+@release-readiness — RC v1.0.1 build 4821 on staging; run full gate set.
+```
+
+**Repo to Roadmap** — first-time or delta baseline:
+
+```text
+@repo-to-roadmap — whole-repo baseline for agent-skills; target: public OSS platform.
+```
 
 ## Install
 
-See **[INSTALL.md](INSTALL.md)** for Cursor, Claude centrum, single-skill symlinks, and ZIP downloads.
+See **[INSTALL.md](INSTALL.md)** for details.
 
 ```bash
 git clone https://github.com/MaciejZet/agent-skills.git
 cd agent-skills
 ./scripts/install-cursor.sh          # ~/.cursor/skills + routing rule
+./scripts/install-claude.sh          # ~/.claude/skills (Claude Code)
 ./scripts/install-claude-centrum.sh  # CometWeb centrum .claude/skills
 ```
 
-Manual symlink:
+Single skill:
 
 ```bash
-ln -s "$(pwd)/skills/product-operator" ~/.cursor/skills/product-operator
+ln -s "$(pwd)/skills/web-app-auditor" ~/.cursor/skills/web-app-auditor
 ```
 
 **AI Council** optional Notion bindings: copy
@@ -90,37 +168,49 @@ ln -s "$(pwd)/skills/product-operator" ~/.cursor/skills/product-operator
 ## Inter-skill protocol
 
 Handoffs use **CometWeb Agent Interchange Protocol (CW-AIP) v1**:
-[`protocol/cw-interchange-v1.md`](protocol/cw-interchange-v1.md) with JSON schemas
-under `protocol/schemas/`. Envelope kinds: `EvidenceEnvelope`, `FindingEnvelope`,
-`DecisionHandoff`, `SpecialistHandoff`, `ArtifactEnvelope`, `SnapshotMetadata`.
+[`protocol/cw-interchange-v1.md`](protocol/cw-interchange-v1.md) with JSON schemas under
+`protocol/schemas/`. Envelope kinds include `EvidenceEnvelope`, `FindingEnvelope`,
+`DecisionHandoff`, `SpecialistHandoff`, `ArtifactEnvelope`, and `SnapshotMetadata`.
 
-## Quality & evals
+Example chains the protocol supports:
+
+- Evidence Researcher → Product Operator
+- Web App Auditor → Release Readiness
+- Competitive Intelligence → AI Council
+
+## Quality and evals
 
 ```bash
-./scripts/public-safety-check.sh      # no leaked Notion IDs
-python3 scripts/validate_skills.py    # metadata + routing suite
-./scripts/run_all_tests.sh            # all skill unit tests
-python3 skills/ai-humanize/scripts/release_check.py
+./scripts/run_all_checks.sh           # safety + validate + routing + pytest + release_check
+./scripts/public-safety-check.sh    # no leaked Notion IDs in OSS tree
+python3 scripts/validate_skills.py    # metadata + routing suite shape
+python3 scripts/run_routing_evals.py  # 66 routing cases
+./scripts/run_all_tests.sh            # 327+ unit tests across skills
 ```
 
-Per-skill deterministic tools live under `skills/<name>/scripts/`. Release tags:
-`<skill-name>-vX.Y.Z` (see each skill's `VERSION` file). Package ZIPs:
-`./scripts/package-releases.sh v1.0.1`
+Per-skill tools live under `skills/<name>/scripts/`. Bundle releases:
 
-See [INSTALL.md](INSTALL.md), [CHANGELOG.md](CHANGELOG.md), [CONTRIBUTING.md](CONTRIBUTING.md), and [docs/](docs/).
+```bash
+./scripts/package-releases.sh v1.0.2
+```
+
+See [CHANGELOG.md](CHANGELOG.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Compatibility
 
-Skills ship `agents/openai.yaml` for ChatGPT, Codex, Atlas, and API hosts that
-support Agent Skills. Implicit invocation is enabled for most skills; **AI Council**
-requires explicit invocation for material decisions.
+| Host | Install path |
+| --- | --- |
+| **Cursor** | `./scripts/install-cursor.sh` |
+| **Claude Code** | `./scripts/install-claude.sh` |
+| **ChatGPT / Codex / Atlas** | Upload per-skill ZIP from Releases; `agents/openai.yaml` metadata |
+| **CometWeb centrum** | `./scripts/install-claude-centrum.sh` |
 
-## License & notice
+Implicit invocation is enabled for most skills. **AI Council** requires explicit
+invocation for material decisions.
+
+## License
 
 MIT — see [LICENSE](LICENSE). Per-skill licenses in `skills/*/LICENSE`.
 [NOTICE](NOTICE) covers private bindings and provenance.
 
-## CometWeb Labs
-
-Downstream product value over star count. Built alongside
-[CometWeb Insight](https://cometweb.io) and the CometWeb agent toolchain.
+Built alongside [CometWeb Insight](https://cometweb.io).

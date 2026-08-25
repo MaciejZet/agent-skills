@@ -198,7 +198,7 @@ def frame_install(fonts: dict) -> Image.Image:
     wordmark_centered(draw, 176, fonts["title"])
 
     draw.text((W // 2, 228), "Quick install", fill=TEXT2, font=fonts["section"], anchor="mm")
-    draw.text((W // 2, 258), "Cursor · ChatGPT · Codex", fill=MUTED, font=fonts["small"], anchor="mm")
+    draw.text((W // 2, 258), "Cursor · Claude · ChatGPT · Codex", fill=MUTED, font=fonts["small"], anchor="mm")
 
     cmd = (MARGIN + 48, 288, W - MARGIN - 48, 340)
     rounded_rect(draw, cmd, 14, CARD, outline=MINT, width=2)

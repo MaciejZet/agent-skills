@@ -2,7 +2,7 @@
 
 | Doc | Purpose |
 | --- | --- |
-| [../INSTALL.md](../INSTALL.md) | Install for Cursor, Claude, ZIP releases |
+| [../INSTALL.md](../INSTALL.md) | Install for Cursor, Claude Code, Claude centrum, ZIP releases |
 | [../CHANGELOG.md](../CHANGELOG.md) | Bundle release history |
 | [../protocol/cw-interchange-v1.md](../protocol/cw-interchange-v1.md) | Cross-skill handoff protocol (CW-AIP v1) |
 | [../evals/routing/README.md](../evals/routing/README.md) | Routing eval suite |

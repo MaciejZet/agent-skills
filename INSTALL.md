@@ -1,6 +1,6 @@
 # Install CometWeb Agent Skills
 
-Twelve standalone skills for **Cursor**, **ChatGPT**, **Codex**, and compatible hosts.
+Twelve standalone skills for **Cursor**, **Claude Code**, **ChatGPT**, **Codex**, and compatible hosts.
 
 ## Quick install (Cursor)
 
@@ -15,7 +15,17 @@ This symlinks all skills to `~/.cursor/skills/` and installs the routing rule at
 
 Restart Cursor (or open a new chat) and invoke e.g. `@web-app-auditor`.
 
-## CometWeb centrum (Claude Code)
+## Quick install (Claude Code)
+
+```bash
+git clone https://github.com/MaciejZet/agent-skills.git
+cd agent-skills
+./scripts/install-claude.sh
+```
+
+Symlinks all skills to `~/.claude/skills/`. Restart Claude Code or start a new session, then invoke the skill by name.
+
+## CometWeb centrum (Claude relative paths)
 
 ```bash
 git clone https://github.com/MaciejZet/agent-skills.git

@@ -23,17 +23,19 @@ Upload the packaged `skill.zip`. The ChatGPT-compatible `SKILL.md` frontmatter
 contains only `name` and `description`; OpenAI UI metadata lives in
 `agents/openai.yaml`.
 
-## Repository-based agents
+## Claude Code / repository-based agents
 
 If the host supports filesystem skills, copy the whole folder into the skill
-location documented by that host. A common repository-level location is:
+location documented by that host, or run `./scripts/install-claude.sh` from the
+repo root for `~/.claude/skills/`. A common repository-level location is:
 
 ```text
 .agents/skills/web-app-auditor/
 ```
 
-Some hosts also support product-specific directories such as `.cursor/skills/`
-or `.claude/skills/`. Those conventions can change; prefer the current host
+Some hosts also support product-specific directories such as `.cursor/skills/`,
+`.claude/skills/` (Claude Code — see repo `./scripts/install-claude.sh`), or
+`.agents/skills/`. Those conventions can change; prefer the current host
 documentation over this file.
 
 `extras/cursor-rule.mdc` and `extras/AGENTS.snippet.md` are optional adapters.

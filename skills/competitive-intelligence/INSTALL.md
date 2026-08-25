@@ -18,7 +18,17 @@ ln -s "$(pwd)/skills/competitive-intelligence" ~/.cursor/skills/competitive-inte
 
 Optional: copy or link `extras/cursor-rule.mdc` into your project `.cursor/rules/`.
 
-## ChatGPT / Codex / other hosts
+## Claude Code
+
+From the repo root:
+
+```bash
+./scripts/install-claude.sh
+```
+
+Or symlink only this skill into `~/.claude/skills/`.
+
+## ChatGPT / Codex
 
 Upload a ZIP of this skill folder (see repo `scripts/package-releases.sh`) or copy into the host's skills path. Metadata: `agents/openai.yaml`.
 

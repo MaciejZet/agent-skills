@@ -4,6 +4,17 @@ All notable changes to the **CometWeb Agent Skills** bundle (public repo).
 
 Format follows [Keep a Changelog](https://keepachangelog.com/). Version tags: `vMAJOR.MINOR.PATCH`.
 
+## [1.0.2] - 2026-08-26
+
+### Added
+
+- [`scripts/install-claude.sh`](scripts/install-claude.sh) — symlink all skills to `~/.claude/skills/` (Claude Code)
+
+### Changed
+
+- README: architecture diagram, evidence flow, per-skill roles, routing collision guide (roadmap-aligned)
+- INSTALL, demo GIF, and skill INSTALL docs list Claude Code alongside Cursor and ChatGPT
+
 ## [1.0.1] - 2026-08-26
 
 ### Added
@@ -28,5 +39,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Version tags: `v
 - GitHub Actions CI: safety check, validation, routing evals, pytest
 - GitHub Release v1.0.0 with per-skill and bundle ZIPs
 
+[1.0.2]: https://github.com/MaciejZet/agent-skills/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/MaciejZet/agent-skills/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/MaciejZet/agent-skills/releases/tag/v1.0.0
