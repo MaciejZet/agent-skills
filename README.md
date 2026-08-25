@@ -223,8 +223,11 @@ See [CHANGELOG.md](CHANGELOG.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 | --- | --- |
 | **Cursor** | `./scripts/install-cursor.sh` |
 | **Claude Code** | `./scripts/install-claude.sh` |
-| **ChatGPT / Codex / Atlas** | Upload per-skill ZIP from Releases; `agents/openai.yaml` metadata |
+| **Codex** | `./scripts/install-codex.sh` |
+| **ChatGPT / Atlas** | Upload per-skill ZIP from Releases; `agents/openai.yaml` metadata |
 | **CometWeb centrum** | `./scripts/install-claude-centrum.sh` |
+
+Multiagent smoke walkthrough: [`docs/multiagent-smoke-example.md`](docs/multiagent-smoke-example.md).
 
 Implicit invocation is enabled for most skills. **AI Council** requires explicit
 invocation for material decisions.

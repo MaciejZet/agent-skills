@@ -1,0 +1,128 @@
+{
+  "id": "evidence-researcher:EvidenceEnvelope:smoke-step1-cometweb-pricing",
+  "type": "EvidenceEnvelope",
+  "producer": "evidence-researcher",
+  "protocol_version": "1.0",
+  "subject": "https://cometweb.io/pricing — Growth dual-currency, Free CTA, Studio vs Growth features",
+  "as_of": "2026-08-26T00:00:00+02:00",
+  "source": "live-app",
+  "locator": "https://cometweb.io/pricing",
+  "freshness": "CURRENT",
+  "status": "PARTIAL",
+  "payload": {
+    "research_contract": "QUICK verification of 3 material claims on CometWeb marketing pricing page; as_of 2026-08-26 Europe/Warsaw; live HTTP fetch of EN /pricing and PL /pl/pricing.",
+    "material_claims": [
+      {
+        "claim_id": "CLAIM-1",
+        "text": "Growth tier monthly price is shown in both PLN and USD on the pricing page.",
+        "epistemic_kind": "FACT",
+        "materiality": "material",
+        "status": "PARTIAL",
+        "confidence": "medium",
+        "freshness": "CURRENT",
+        "last_verified_at": "2026-08-26T00:00:00+02:00"
+      },
+      {
+        "claim_id": "CLAIM-2",
+        "text": "Free plan primary CTA links to app.cometweb.io/register without billing/plan query params.",
+        "epistemic_kind": "FACT",
+        "materiality": "material",
+        "status": "VERIFIED",
+        "confidence": "high",
+        "freshness": "CURRENT",
+        "last_verified_at": "2026-08-26T00:00:00+02:00"
+      },
+      {
+        "claim_id": "CLAIM-3",
+        "text": "Studio tier lists features/capabilities distinct from Growth (not identical copy).",
+        "epistemic_kind": "FACT",
+        "materiality": "material",
+        "status": "VERIFIED",
+        "confidence": "high",
+        "freshness": "CURRENT",
+        "last_verified_at": "2026-08-26T00:00:00+02:00"
+      }
+    ],
+    "claims": [
+      {
+        "claim_id": "CLAIM-1",
+        "claim_text": "Growth tier monthly price is shown in both PLN and USD on the pricing page.",
+        "epistemic_kind": "FACT",
+        "materiality": "material",
+        "status": "PARTIAL",
+        "confidence": "medium",
+        "contradiction_tested": true,
+        "falsifier_summary": "Checked EN /pricing SSR for simultaneous PLN+USD Growth numerals; only USD ($39/mo) rendered. PL /pl/pricing shows 159 zł. Absence of dual-currency simultaneous display does not falsify locale/currency-selector model.",
+        "evidence": [
+          {
+            "direction": "SUPPORT",
+            "source": "https://cometweb.io/pricing",
+            "locator": "Growth plan card + comparison table",
+            "summary": "FACT: EN pricing SSR shows Growth monthly price as $39/mo.",
+            "admission": "ACCEPTED"
+          },
+          {
+            "direction": "SUPPORT",
+            "source": "https://cometweb.io/pl/pricing",
+            "locator": "Growth plan card",
+            "summary": "FACT: PL pricing SSR shows Growth monthly price as 159 zł/mc.",
+            "admission": "ACCEPTED"
+          },
+          {
+            "direction": "CONTEXT",
+            "source": "https://cometweb.io/pricing",
+            "locator": "billing note + currency selector (USD/PLN labels in SSR)",
+            "summary": "FACT: Page states PLN and USD are separate price lists; USD/PLN selector present. INFERENCE: Both currencies are supported on the pricing page via locale/currency selection, but a single default EN SSR snapshot does not render both numerals at once.",
+            "admission": "CONTEXT_ONLY"
+          }
+        ]
+      },
+      {
+        "claim_id": "CLAIM-2",
+        "claim_text": "Free plan primary CTA links to app.cometweb.io/register without billing/plan query params.",
+        "epistemic_kind": "FACT",
+        "materiality": "material",
+        "status": "VERIFIED",
+        "confidence": "high",
+        "contradiction_tested": true,
+        "falsifier_summary": "Searched live HTML for app.cometweb.io/register? on EN /pricing; none found. Bare register URL present once.",
+        "evidence": [
+          {
+            "direction": "SUPPORT",
+            "source": "https://cometweb.io/pricing",
+            "locator": "Free plan card primary CTA ('Create free account')",
+            "summary": "FACT: SSR HTML embeds destination https://app.cometweb.io/register with no query string; no register? URLs on page.",
+            "admission": "ACCEPTED"
+          }
+        ]
+      },
+      {
+        "claim_id": "CLAIM-3",
+        "claim_text": "Studio tier lists features/capabilities distinct from Growth (not identical copy).",
+        "epistemic_kind": "FACT",
+        "materiality": "material",
+        "status": "VERIFIED",
+        "confidence": "high",
+        "contradiction_tested": true,
+        "falsifier_summary": "Compared Growth vs Studio feature blocks and comparison table; numeric limits and Studio-only EAA line differ; not identical copy.",
+        "evidence": [
+          {
+            "direction": "SUPPORT",
+            "source": "https://cometweb.io/pricing",
+            "locator": "Growth card features + Studio card ('Everything from Growth, plus:') + comparison table",
+            "summary": "FACT: Growth lists 300 Comet Credits/mo, crawl up to 200 pages, 30 days data history. Studio lists 550 credits/mo, crawl up to 500 pages, 90 days history, and EAA-readiness accessibility screening — distinct copy and limits, not a duplicate feature list.",
+            "admission": "ACCEPTED"
+          }
+        ]
+      }
+    ],
+    "gaps": [
+      "Client-side currency toggle on https://cometweb.io/pricing was not exercised in this pass; PLN Growth price on the EN URL after manual USD→PLN switch is inferred from locale/currency UX, not live-click verified.",
+      "Free CTA is implemented as a button-driven navigation in app code; live fetch confirms bare register URL in SSR payload but did not execute a click-through to confirm runtime redirect lacks params."
+    ],
+    "contradictions": [
+      "CLAIM-1 wording 'shown in both PLN and USD' is ambiguous: simultaneous dual display on one SSR view is false; dual-currency availability across pricing page experience is true."
+    ],
+    "evidence_pack_hash": "ef4d70f6b87918e8079b7701c6d40752fde59029a90b9a2d590684fa61920608"
+  }
+}

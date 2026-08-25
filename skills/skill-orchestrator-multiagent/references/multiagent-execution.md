@@ -64,6 +64,27 @@ If the host has **no** Task/subagent API:
 Do **not** silently fall back to single-thread multi-skill execution — that defeats
 this skill's purpose.
 
+## Cloud subagents (Cursor Cloud / isolated VM)
+
+When local Task context is too small or you need a clean VM per step:
+
+1. Launch a **cloud** subagent (`environment: cloud`) per step with the same prompt payload.
+2. Each cloud run gets its own branch/worktree — good for repo-touching skills (`repo-to-roadmap`, `web-app-auditor` with artifacts).
+3. Parent still merges envelopes only; do not re-run domain logic after cloud return.
+4. Stop cloud agents when done to avoid idle billing.
+
+Use local Task for quick evidence/Council chains; use cloud when the step mutates repo state or needs full browser/CI isolation.
+
+## Envelope validation between steps
+
+Before launching step *N+1*, validate step *N* output:
+
+```bash
+python3 scripts/validate_envelope.py /tmp/step1-evidence.json --expect-type EvidenceEnvelope
+```
+
+Ships with `skill-orchestrator-multiagent`. Requires `jsonschema` (repo `requirements-dev.txt`) for full schema check; falls back to required-field lint otherwise.
+
 ## Verification before close
 
 - [ ] One subagent run per planned step (or documented block with reason)

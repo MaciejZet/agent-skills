@@ -1,0 +1,131 @@
+{
+  "id": "ai-council:DecisionHandoff:smoke-step2-cometweb-pricing-growth",
+  "type": "DecisionHandoff",
+  "producer": "ai-council",
+  "protocol_version": "1.0",
+  "subject": "Ship current Growth tier marketing copy on cometweb.io/pricing as-is",
+  "as_of": "2026-08-26T01:09:00+02:00",
+  "source": "live-app",
+  "locator": "https://cometweb.io/pricing",
+  "freshness": "CURRENT",
+  "confidence": 0.81,
+  "status": "COMPLETE",
+  "dependencies": [
+    "evidence-researcher:EvidenceEnvelope:smoke-step1-cometweb-pricing"
+  ],
+  "payload": {
+    "decision_question": "Given verified pricing-page claims from upstream Evidence Pack, issue GO/NO-GO/TEST/DEFER on shipping current Growth tier marketing copy on cometweb.io/pricing as-is.",
+    "verdict": "GO",
+    "council_mode": "STANDARD",
+    "required_confidence": 0.65,
+    "overall_confidence": 0.81,
+    "recommended_action": "Ship current Growth tier card copy and feature list on /pricing and /pl/pricing without copy changes.",
+    "reasoning_summary": "Growth copy is price-accurate per locale ($39/mo EN SSR; 159 zł/mc PL SSR), feature-differentiated from Studio, and supported by CURRENT upstream evidence re-verified live. CLAIM-1 PARTIAL reflects ambiguous research wording about simultaneous dual-currency display, not a falsified Growth marketing claim; product policy uses separate PLN/USD price lists via locale/currency selector.",
+    "confidence_map": {
+      "thesis": 0.78,
+      "evidence": 0.82,
+      "execution": 0.85,
+      "financial": 0.8,
+      "legal": 0.75,
+      "reputation": 0.8,
+      "timing": 0.9,
+      "weakest_dimension": "legal"
+    },
+    "freshness_summary": {
+      "status": "CLEAR",
+      "oldest_material_evidence_hours": 1.15,
+      "material_claims_current": 3,
+      "refresh_required": false
+    },
+    "evidence_coverage": {
+      "upstream_envelope_status": "PARTIAL",
+      "decision_specific_reverification": "COMPLETE",
+      "critical_gap": false,
+      "accepted_claims_for_decision": [
+        {
+          "claim_id": "CLAIM-1",
+          "decision_status": "ACCEPTED_WITH_QUALIFIER",
+          "qualifier": "Growth price is locale/currency-specific (USD on EN, PLN on PL); not simultaneous dual numerals on one SSR view."
+        },
+        {
+          "claim_id": "CLAIM-2",
+          "decision_status": "VERIFIED"
+        },
+        {
+          "claim_id": "CLAIM-3",
+          "decision_status": "VERIFIED"
+        }
+      ],
+      "live_spot_check_as_of": "2026-08-26T01:09:00+02:00",
+      "live_spot_check_findings": [
+        "EN /pricing SSR renders Growth at $39/mo with 300 Comet Credits / mo feature copy.",
+        "PL /pl/pricing SSR renders Growth at 159 zł/mc.",
+        "Free primary CTA embeds https://app.cometweb.io/register with no register? query params.",
+        "No register? URLs found on EN /pricing HTML."
+      ]
+    },
+    "contradiction_coverage": {
+      "tested": true,
+      "unresolved_critical": 0,
+      "resolved": [
+        "CLAIM-1 wording ambiguity resolved: simultaneous dual display false; dual-currency availability via locale/selector true and intentional."
+      ]
+    },
+    "gates": {
+      "legal": {
+        "status": "CLEAR_WITH_CONTROLS",
+        "basis": "Consumer-advertising surface; separate PLN/USD price lists disclosed in billing note; no Growth card copy asserting simultaneous dual-currency numerals."
+      },
+      "financial_risk": {
+        "status": "CLEAR",
+        "basis": "Displayed Growth prices match verified live SSR; checkout parity not in scope for copy-only decision."
+      },
+      "reputation": {
+        "status": "CLEAR",
+        "basis": "Growth feature limits and Studio differentiation verified; no duplicate-tier copy risk."
+      },
+      "freshness": {
+        "status": "CLEAR",
+        "basis": "All material claims CURRENT within policy at decision as_of."
+      }
+    },
+    "blockers": [],
+    "controls": [
+      "Keep visible billing note that PLN and USD are separate price lists, not live FX conversion.",
+      "Do not add Growth copy implying both PLN and USD numerals display simultaneously on a single default SSR view.",
+      "Optional follow-up: click-verify USD→PLN currency selector on EN /pricing and Free CTA runtime navigation (upstream gaps, non-blocking for copy ship)."
+    ],
+    "assumption_risks": [
+      {
+        "assumption": "Growth card copy does not hidden-claim checkout prices beyond displayed locale price.",
+        "importance": "medium",
+        "uncertainty": "low"
+      }
+    ],
+    "double_crux": "If live EN /pricing after USD→PLN selector fails to show 159 zł Growth price, reopen copy/UX alignment.",
+    "what_changes_decision": [
+      "Growth price mismatch vs Stripe/app checkout for same locale/currency.",
+      "Addition of copy claiming simultaneous PLN+USD Growth numerals on one view.",
+      "Studio/Growth feature copy convergence making tiers indistinguishable."
+    ],
+    "watch_dependencies": [
+      {
+        "trigger": "Stripe or app.cometweb.io checkout price differs from displayed Growth locale price",
+        "owner": "marketing+product",
+        "action": "REOPEN pricing copy decision"
+      }
+    ],
+    "human_approval": {
+      "required": false,
+      "status": "NOT_REQUIRED"
+    },
+    "snapshot": {
+      "snapshot_version": 3,
+      "snapshot_hash": "snap-976795bb1e64e7a95f71555ac4279fff0946dfb98fa5a7b9278737dfdb30bfef",
+      "current_validity": "VALID",
+      "council_version": "5.0",
+      "kernel_version": "5.0.0"
+    },
+    "upstream_evidence_pack_hash": "ef4d70f6b87918e8079b7701c6d40752fde59029a90b9a2d590684fa61920608"
+  }
+}

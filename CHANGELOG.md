@@ -4,6 +4,17 @@ All notable changes to the **CometWeb Agent Skills** bundle (public repo).
 
 Format follows [Keep a Changelog](https://keepachangelog.com/). Version tags: `vMAJOR.MINOR.PATCH`.
 
+## [1.0.6] - 2026-08-26
+
+### Added
+
+- Envelope validator for multiagent handoffs (`validate_envelope.py`)
+- Multiagent smoke walkthrough and demo Evidence Pack (`docs/multiagent-smoke-example.md`, `docs/demo/smoke-step1-evidence.json`)
+
+### Changed
+
+- Multiagent docs: cloud subagent notes, step validation guidance
+
 ## [1.0.5] - 2026-08-26
 
 ### Added
