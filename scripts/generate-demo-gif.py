@@ -15,8 +15,13 @@ OUT = ROOT / "docs" / "demo"
 ASSETS = OUT / "assets"
 
 W, H = 960, 540
+MARGIN = 40
+HEADER_H = 64
+CONTENT_TOP = HEADER_H + 16
+CONTENT_BOTTOM = H - 24
+CONTENT_W = W - 2 * MARGIN
 
-# CometWeb tokens — platforms/cometweb-io/src/lib/styles/tokens.css
+# CometWeb tokens
 NIGHT = (24, 24, 27)
 MINT = (5, 242, 155)
 TRUST = (4, 194, 124)
@@ -33,66 +38,37 @@ WARNING = (245, 158, 11)
 ERROR = (239, 68, 68)
 
 
-def hex_rgb(value: str) -> tuple[int, int, int]:
-    value = value.lstrip("#")
-    return tuple(int(value[i : i + 2], 16) for i in (0, 2, 4))  # type: ignore[return-value]
-
-
-def lerp(a: int, b: int, t: float) -> int:
-    return int(a + (b - a) * t)
-
-
 def blend(c1: tuple[int, int, int], c2: tuple[int, int, int], t: float) -> tuple[int, int, int]:
-    return (lerp(c1[0], c2[0], t), lerp(c1[1], c2[1], t), lerp(c1[2], c2[2], t))
+    return tuple(int(a + (b - a) * t) for a, b in zip(c1, c2, strict=True))
 
 
 def load_fonts() -> dict[str, ImageFont.FreeTypeFont | ImageFont.ImageFont]:
     regular = ASSETS / "nunito-sans-regular.ttf"
     semibold = ASSETS / "nunito-sans-600.ttf"
     bold = ASSETS / "nunito-sans-700.ttf"
-    fallback = "/System/Library/Fonts/Supplemental/Arial.ttf"
-    fallback_b = "/System/Library/Fonts/Supplemental/Arial Bold.ttf"
+    fb = "/System/Library/Fonts/Supplemental/Arial.ttf"
+    fbb = "/System/Library/Fonts/Supplemental/Arial Bold.ttf"
 
-    def ft(path: Path, size: int, fb: str) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+    def ft(path: Path, size: int, fallback: str) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
         try:
-            return ImageFont.truetype(str(path if path.exists() else fb), size)
+            return ImageFont.truetype(str(path if path.exists() else fallback), size)
         except OSError:
             return ImageFont.load_default()
 
-    if not regular.exists():
-        for src, dst in [
-            (
-                ROOT.parent / "cometweb-io" / "static" / "fonts" / "nunito-sans-regular.ttf",
-                regular,
-            ),
-            (
-                ROOT.parent / "cometweb-io" / "static" / "fonts" / "nunito-sans-600.ttf",
-                semibold,
-            ),
-        ]:
-            if src.exists():
-                ASSETS.mkdir(parents=True, exist_ok=True)
-                dst.write_bytes(src.read_bytes())
-
     return {
-        "hero": ft(bold, 46, fallback_b),
-        "title": ft(bold, 32, fallback_b),
-        "subtitle": ft(semibold, 22, fallback_b),
-        "body": ft(regular if regular.exists() else Path(fallback), 18, fallback),
-        "small": ft(regular if regular.exists() else Path(fallback), 14, fallback),
-        "mono": ft(regular if regular.exists() else Path(fallback), 15, fallback),
-        "badge": ft(bold, 12, fallback_b),
-        "label": ft(semibold, 11, fallback_b),
+        "display": ft(bold, 40, fbb),
+        "title": ft(bold, 28, fbb),
+        "section": ft(semibold, 20, fbb),
+        "body": ft(regular, 16, fb),
+        "small": ft(regular, 13, fb),
+        "mono": ft(regular, 14, fb),
+        "chip": ft(semibold, 11, fbb),
+        "badge": ft(bold, 11, fbb),
     }
 
 
 def load_logo(size: int = 72) -> Image.Image:
     svg = ASSETS / "cometweb-logo.svg"
-    if not svg.exists():
-        alt = ROOT.parent / "cometweb-io" / "static" / "logo.svg"
-        if alt.exists():
-            ASSETS.mkdir(parents=True, exist_ok=True)
-            svg.write_bytes(alt.read_bytes())
     png = cairosvg.svg2png(url=str(svg), output_width=size)
     return Image.open(BytesIO(png)).convert("RGBA")
 
@@ -101,37 +77,12 @@ def gradient_bg(top: tuple[int, int, int], bottom: tuple[int, int, int], glow: t
     img = Image.new("RGB", (W, H), top)
     draw = ImageDraw.Draw(img)
     for y in range(H):
-        t = y / max(H - 1, 1)
-        draw.line([(0, y), (W, y)], fill=blend(top, bottom, t))
+        draw.line([(0, y), (W, y)], fill=blend(top, bottom, y / max(H - 1, 1)))
     if glow:
         overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
         od = ImageDraw.Draw(overlay)
-        od.ellipse((W // 2 - 280, -120, W // 2 + 280, 320), fill=(*glow, 38))
-        od.ellipse((120, H - 200, 420, H + 80), fill=(*TRUST, 22))
+        od.ellipse((W // 2 - 240, -80, W // 2 + 240, 280), fill=(*glow, 32))
         img = Image.alpha_composite(img.convert("RGBA"), overlay).convert("RGB")
-    return img
-
-
-def draw_wordmark(draw: ImageDraw.ImageDraw, x: int, y: int, fonts: dict, size: str = "subtitle") -> None:
-    f = fonts[size]
-    draw.text((x, y), "Comet", fill=TEXT, font=f)
-    w = draw.textlength("Comet", font=f)
-    draw.text((x + w, y), "Web", fill=MINT, font=f)
-
-
-def header_bar(base: Image.Image, fonts: dict, title: str, subtitle: str = "") -> Image.Image:
-    img = base.copy()
-    draw = ImageDraw.Draw(img)
-    draw.rectangle((0, 0, W, 72), fill=(*BG2, 255))
-    draw.line([(0, 72), (W, 72)], fill=BORDER, width=1)
-
-    logo = load_logo(44)
-    img.paste(logo, (24, 14), logo)
-    draw_wordmark(draw, 78, 18, fonts, "subtitle")
-
-    draw.text((W - 24, 22), title, fill=MINT, font=fonts["subtitle"], anchor="ra")
-    if subtitle:
-        draw.text((W - 24, 48), subtitle, fill=MUTED, font=fonts["small"], anchor="ra")
     return img
 
 
@@ -146,36 +97,158 @@ def rounded_rect(
     draw.rounded_rectangle(box, radius=radius, fill=fill, outline=outline, width=width)
 
 
-def arrow(draw: ImageDraw.ImageDraw, start: tuple[int, int], end: tuple[int, int], color: tuple[int, int, int]) -> None:
-    draw.line([start, end], fill=color, width=3)
-    angle = math.atan2(end[1] - start[1], end[0] - start[0])
-    size = 10
-    for da in (2.6, -2.6):
-        ax = end[0] - size * math.cos(angle - da)
-        ay = end[1] - size * math.sin(angle - da)
-        draw.line([end, (ax, ay)], fill=color, width=3)
+def text_center(
+    draw: ImageDraw.ImageDraw,
+    box: tuple[int, int, int, int],
+    text: str,
+    font: ImageFont.ImageFont,
+    fill: tuple[int, int, int],
+    dy: int = 0,
+) -> None:
+    x0, y0, x1, y1 = box
+    bbox = draw.textbbox((0, 0), text, font=font)
+    tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
+    draw.text((x0 + (x1 - x0 - tw) // 2, y0 + (y1 - y0 - th) // 2 + dy), text, fill=fill, font=font)
+
+
+def text_fit(
+    draw: ImageDraw.ImageDraw,
+    text: str,
+    font: ImageFont.ImageFont,
+    max_w: int,
+    min_size: int = 11,
+) -> ImageFont.ImageFont:
+    if not hasattr(font, "path"):
+        return font
+    size = font.size
+    while size > min_size and draw.textlength(text, font=font) > max_w:
+        size -= 1
+        font = ImageFont.truetype(font.path, size)
+    return font
+
+
+def wrap_text(text: str, font: ImageFont.ImageFont, max_w: int, draw: ImageDraw.ImageDraw) -> list[str]:
+    words = text.split()
+    lines: list[str] = []
+    current = words[0] if words else ""
+    for word in words[1:]:
+        trial = f"{current} {word}"
+        if draw.textlength(trial, font=font) <= max_w:
+            current = trial
+        else:
+            lines.append(current)
+            current = word
+    if current:
+        lines.append(current)
+    return lines
+
+
+def arrow_h(draw: ImageDraw.ImageDraw, y: int, x1: int, x2: int, color: tuple[int, int, int]) -> None:
+    if x2 <= x1:
+        return
+    draw.line([(x1, y), (x2 - 8, y)], fill=color, width=2)
+    draw.polygon([(x2, y), (x2 - 10, y - 5), (x2 - 10, y + 5)], fill=color)
+
+
+def arrow_v(draw: ImageDraw.ImageDraw, x: int, y1: int, y2: int, color: tuple[int, int, int]) -> None:
+    if y2 <= y1:
+        return
+    draw.line([(x, y1), (x, y2 - 8)], fill=color, width=2)
+    draw.polygon([(x, y2), (x - 5, y2 - 10), (x + 5, y2 - 10)], fill=color)
+
+
+def check_mark(draw: ImageDraw.ImageDraw, x: int, y: int, color: tuple[int, int, int]) -> None:
+    draw.line([(x, y + 6), (x + 4, y + 10), (x + 11, y + 1)], fill=color, width=2)
+
+
+def row_boxes(
+    draw: ImageDraw.ImageDraw,
+    items: list[tuple[str, str]],
+    y: int,
+    height: int,
+    fonts: dict,
+    *,
+    gap: int = 14,
+    accent_first: bool = False,
+    accent_last: bool = False,
+) -> None:
+    n = len(items)
+    box_w = (CONTENT_W - gap * (n - 1)) // n
+    x = MARGIN
+    cy = y + height // 2
+    for i, (title, sub) in enumerate(items):
+        accent = (i == 0 and accent_first) or (i == n - 1 and accent_last)
+        outline = MINT if accent else BORDER
+        rounded_rect(draw, (x, y, x + box_w, y + height), 12, CARD, outline=outline, width=2 if accent else 1)
+        text_center(draw, (x, y + 8, x + box_w, y + height // 2 + 8), title, fonts["section"], TEXT)
+        text_center(draw, (x, y + height // 2, x + box_w, y + height - 8), sub, fonts["small"], MUTED)
+        if i < n - 1:
+            arrow_h(draw, cy, x + box_w + 2, x + box_w + gap - 2, TRUST)
+        x += box_w + gap
+
+
+def header_bar(base: Image.Image, fonts: dict, title: str, subtitle: str = "") -> Image.Image:
+    img = base.copy()
+    draw = ImageDraw.Draw(img)
+    draw.rectangle((0, 0, W, HEADER_H), fill=BG2)
+    draw.line([(0, HEADER_H), (W, HEADER_H)], fill=BORDER, width=1)
+
+    logo = load_logo(36)
+    img.paste(logo, (MARGIN, 14), logo)
+    draw.text((MARGIN + 48, 20), "Comet", fill=TEXT, font=fonts["section"])
+    comet_w = draw.textlength("Comet", font=fonts["section"])
+    draw.text((MARGIN + 48 + comet_w, 20), "Web", fill=MINT, font=fonts["section"])
+
+    title_font = text_fit(draw, title, fonts["section"], 320, min_size=16)
+    draw.text((W - MARGIN, 18), title, fill=MINT, font=title_font, anchor="ra")
+    if subtitle:
+        sub_font = text_fit(draw, subtitle, fonts["small"], 320, min_size=11)
+        draw.text((W - MARGIN, 42), subtitle, fill=MUTED, font=sub_font, anchor="ra")
+    return img
+
+
+def panel(
+    draw: ImageDraw.ImageDraw,
+    box: tuple[int, int, int, int],
+    title: str,
+    fonts: dict,
+    *,
+    outline: tuple[int, int, int] = BORDER,
+) -> tuple[int, int, int, int]:
+    rounded_rect(draw, box, 14, CARD, outline=outline, width=2 if outline != BORDER else 1)
+    x0, y0, x1, _ = box
+    draw.text((x0 + 16, y0 + 12), title, fill=MINT, font=fonts["section"])
+    return (x0 + 16, y0 + 44, x1 - 16, box[3] - 12)
+
+
+def draw_wordmark_centered(draw: ImageDraw.ImageDraw, y: int, font: ImageFont.ImageFont) -> None:
+    comet, web = "Comet", "Web"
+    total = draw.textlength(comet + web, font=font)
+    x = (W - total) // 2
+    draw.text((x, y), comet, fill=TEXT, font=font)
+    draw.text((x + draw.textlength(comet, font=font), y), web, fill=MINT, font=font)
 
 
 def frame_hero(fonts: dict) -> Image.Image:
     img = gradient_bg(DEPTH, BG, glow=MINT)
     draw = ImageDraw.Draw(img)
 
-    logo = load_logo(140)
-    img.paste(logo, (W // 2 - 70, 72), logo)
-    draw_wordmark(draw, W // 2 - 95, 228, fonts, "hero")
+    logo = load_logo(120)
+    img.paste(logo, (W // 2 - 60, 56), logo)
 
-    draw.text((W // 2, 292), "Web App Auditor", fill=TEXT, font=fonts["title"], anchor="mm")
+    draw_wordmark_centered(draw, 196, fonts["display"])
+    draw.text((W // 2, 248), "Web App Auditor", fill=TEXT2, font=fonts["title"], anchor="mm")
     draw.text(
-        (W // 2, 340),
-        "Evidence-driven QA · protocol v1.1 · deterministic validator",
-        fill=TEXT2,
+        (W // 2, 292),
+        "Evidence-driven QA, protocol v1.1, deterministic validator",
+        fill=MUTED,
         font=fonts["body"],
         anchor="mm",
     )
 
-    pill = (W // 2 - 150, 390, W // 2 + 150, 430)
-    rounded_rect(draw, pill, 20, CARD, outline=TRUST, width=2)
-    draw.text((W // 2, 410), "12 Agent Skills · Cursor & ChatGPT", fill=MINT, font=fonts["small"], anchor="mm")
+    pill = (W // 2 - 200, 330, W // 2 + 200, 368)
+    rounded_rect(draw, pill, 18, CARD, outline=TRUST, width=2)
+    text_center(draw, pill, "12 Agent Skills for Cursor and ChatGPT", fonts["small"], MINT)
 
     draw.text((W // 2, H - 28), "github.com/MaciejZet/agent-skills", fill=MUTED, font=fonts["small"], anchor="mm")
     return img
@@ -192,29 +265,18 @@ def frame_pipeline(fonts: dict) -> Image.Image:
         ("Finding", "Severity"),
         ("Report", "JSON v1.1"),
     ]
-    x0, y0 = 48, 130
-    box_w, box_h, gap = 148, 88, 24
-    for i, (title, sub) in enumerate(steps):
-        x = x0 + i * (box_w + gap)
-        y = y0 + 40
-        accent = MINT if i == 0 else TRUST if i == len(steps) - 1 else CARD_HOVER
-        rounded_rect(draw, (x, y, x + box_w, y + box_h), 14, CARD, outline=accent, width=2)
-        draw.text((x + box_w // 2, y + 28), title, fill=TEXT, font=fonts["subtitle"], anchor="mm")
-        draw.text((x + box_w // 2, y + 58), sub, fill=MUTED, font=fonts["small"], anchor="mm")
-        if i < len(steps) - 1:
-            arrow(draw, (x + box_w + 4, y + box_h // 2), (x + box_w + gap - 4, y + box_h // 2), MINT)
+    row_boxes(draw, steps, CONTENT_TOP + 8, 96, fonts, accent_first=True, accent_last=True)
 
-    # Loop-back quality gate
-    rounded_rect(draw, (48, 380, W - 48, 470), 16, CARD, outline=BORDER)
-    draw.text((72, 400), "Quality gate", fill=MINT, font=fonts["subtitle"])
-    draw.text(
-        (72, 432),
-        "validate_report.py · schema + invariants · no LLM guesswork on PASS/FAIL",
-        fill=TEXT2,
-        font=fonts["body"],
-    )
-    draw.ellipse((W - 120, 396, W - 72, 444), outline=MINT, width=3)
-    draw.text((W - 96, 420), "CI", fill=MINT, font=fonts["badge"], anchor="mm")
+    gate = (MARGIN, 300, W - MARGIN, CONTENT_BOTTOM)
+    inner = panel(draw, gate, "Quality gate", fonts)
+    x0, y0, x1, y1 = inner
+    draw.text((x0, y0), "validate_report.py", fill=TEXT, font=fonts["mono"])
+    draw.text((x0, y0 + 24), "schema + invariants + evidence links", fill=TEXT2, font=fonts["body"])
+    draw.text((x0, y0 + 48), "PASS / FAIL without LLM guesswork", fill=MUTED, font=fonts["small"])
+
+    badge = (x1 - 72, y0, x1, y0 + 56)
+    rounded_rect(draw, badge, 28, DEPTH, outline=MINT, width=2)
+    text_center(draw, badge, "CI", fonts["section"], MINT)
     return img
 
 
@@ -222,88 +284,136 @@ def frame_scope(fonts: dict) -> Image.Image:
     img = header_bar(gradient_bg(BG2, BG), fonts, "Scope", "cometweb.io/pricing")
     draw = ImageDraw.Draw(img)
 
-    # Browser chrome
-    browser = (60, 100, W - 60, 320)
-    rounded_rect(draw, browser, 18, CARD, outline=BORDER, width=2)
-    draw.rectangle((browser[0], browser[1], browser[2], browser[1] + 44), fill=BG2)
-    for dx, color in [(82, ERROR), (104, WARNING), (126, TRUST)]:
-        draw.ellipse((dx, 112, dx + 16, 128), fill=color)
-    rounded_rect(draw, (150, 108, browser[2] - 24, 134), 8, BG, outline=BORDER)
-    draw.text((162, 121), "https://cometweb.io/pricing", fill=MINT, font=fonts["small"])
+    browser = (MARGIN, CONTENT_TOP, W - MARGIN, CONTENT_TOP + 200)
+    rounded_rect(draw, browser, 14, CARD, outline=BORDER, width=1)
+    bx0, by0, bx1, _ = browser
+    draw.rectangle((bx0, by0, bx1, by0 + 36), fill=BG2)
+    for i, color in enumerate((ERROR, WARNING, TRUST)):
+        draw.ellipse((bx0 + 16 + i * 22, by0 + 10, bx0 + 28 + i * 22, by0 + 22), fill=color)
+    url_box = (bx0 + 72, by0 + 8, bx1 - 16, by0 + 28)
+    rounded_rect(draw, url_box, 6, BG, outline=BORDER)
+    text_center(draw, url_box, "https://cometweb.io/pricing", fonts["small"], MINT)
 
-    # Pricing mock blocks
-    for i, label in enumerate(["Free", "Growth", "Studio", "Scale"]):
-        bx = 90 + i * 195
-        rounded_rect(draw, (bx, 170, bx + 165, 290), 12, BG2, outline=BORDER)
-        draw.text((bx + 82, 195), label, fill=TEXT, font=fonts["subtitle"], anchor="mm")
-        draw.text((bx + 82, 235), "PLN / USD", fill=MUTED, font=fonts["small"], anchor="mm")
-        if i == 2:
-            rounded_rect(draw, (bx + 40, 255, bx + 125, 278), 8, DEPTH, outline=MINT)
-            draw.text((bx + 82, 266), "audit focus", fill=MINT, font=fonts["label"], anchor="mm")
+    tiers = ["Free", "Growth", "Studio", "Scale"]
+    gap = 12
+    card_w = (bx1 - bx0 - 32 - gap * (len(tiers) - 1)) // len(tiers)
+    tx = bx0 + 16
+    ty = by0 + 52
+    th = browser[3] - ty - 12
+    for i, label in enumerate(tiers):
+        box = (tx, ty, tx + card_w, ty + th)
+        outline = MINT if label == "Studio" else BORDER
+        rounded_rect(draw, box, 10, BG2, outline=outline, width=2 if label == "Studio" else 1)
+        text_center(draw, (tx, ty + 8, tx + card_w, ty + th // 2), label, fonts["section"], TEXT)
+        text_center(draw, (tx, ty + th // 2, tx + card_w, ty + th - 8), "PLN / USD", fonts["small"], MUTED)
+        if label == "Studio":
+            chip = (tx + 12, ty + th - 34, tx + card_w - 12, ty + th - 10)
+            rounded_rect(draw, chip, 6, DEPTH, outline=MINT)
+            text_center(draw, chip, "audit focus", fonts["chip"], MINT)
+        tx += card_w + gap
 
-    # Params panel
-    rounded_rect(draw, (60, 350, 460, 500), 14, CARD, outline=TRUST, width=2)
-    draw.text((84, 372), "Scope parameters", fill=MINT, font=fonts["subtitle"])
+    bottom_y = browser[3] + 16
+    bottom_h = CONTENT_BOTTOM - bottom_y
+    left_w = (CONTENT_W - 16) // 2
+    right_x = MARGIN + left_w + 16
+
+    left = (MARGIN, bottom_y, MARGIN + left_w, bottom_y + bottom_h)
+    inner = panel(draw, left, "Scope parameters", fonts, outline=TRUST)
+    x0, y0, _, _ = inner
     params = [
         ("target", "cometweb.io/pricing"),
         ("mode", "area"),
         ("depth", "standard"),
-        ("persona", "prospect · PLN billing"),
+        ("persona", "prospect / PLN billing"),
     ]
-    for i, (k, v) in enumerate(params):
-        y = 408 + i * 22
-        draw.text((84, y), k, fill=MUTED, font=fonts["small"])
-        draw.text((200, y), v, fill=TEXT2, font=fonts["small"])
+    row_h = 28
+    for i, (key, val) in enumerate(params):
+        yy = y0 + i * row_h
+        draw.text((x0, yy), key, fill=MUTED, font=fonts["mono"])
+        draw.text((x0 + 110, yy), val, fill=TEXT2, font=fonts["mono"])
 
-    # Mini sitemap diagram
-    rounded_rect(draw, (500, 350, W - 60, 500), 14, CARD, outline=BORDER)
-    draw.text((524, 372), "Navigation map", fill=MINT, font=fonts["subtitle"])
-    nodes = [("Home", 540, 420), ("Pricing", 660, 420), ("Register", 780, 420), ("Checkout", 660, 460)]
-    for label, nx, ny in nodes:
-        rounded_rect(draw, (nx, ny, nx + 90, ny + 36), 8, BG2, outline=TRUST if label == "Pricing" else BORDER)
-        draw.text((nx + 45, ny + 18), label, fill=TEXT if label == "Pricing" else MUTED, font=fonts["label"], anchor="mm")
-    arrow(draw, (630, 438), (660, 438), MINT)
-    arrow(draw, (750, 438), (780, 438), MINT)
-    arrow(draw, (705, 456), (705, 460), MINT)
+    right = (right_x, bottom_y, W - MARGIN, bottom_y + bottom_h)
+    inner = panel(draw, right, "Navigation map", fonts)
+    x0, y0, x1, y1 = inner
+    node_w, node_h = 96, 32
+    nodes = [("Home", 0), ("Pricing", 1), ("Register", 2)]
+    row_y = y0 + 24
+    total_w = len(nodes) * node_w + (len(nodes) - 1) * 28
+    start_x = x0 + (x1 - x0 - total_w) // 2
+    centers: list[tuple[int, str]] = []
+    for i, (label, _) in enumerate(nodes):
+        nx = start_x + i * (node_w + 28)
+        box = (nx, row_y, nx + node_w, row_y + node_h)
+        outline = MINT if label == "Pricing" else BORDER
+        rounded_rect(draw, box, 8, BG2, outline=outline, width=2 if label == "Pricing" else 1)
+        text_center(draw, box, label, fonts["chip"], TEXT if label == "Pricing" else MUTED)
+        centers.append((nx + node_w // 2, label))
+        if i < len(nodes) - 1:
+            arrow_h(draw, row_y + node_h // 2, nx + node_w + 2, nx + node_w + 26, TRUST)
+
+    checkout_y = row_y + node_h + 28
+    cx = centers[1][0]
+    checkout = (cx - node_w // 2, checkout_y, cx + node_w // 2, checkout_y + node_h)
+    rounded_rect(draw, checkout, 8, BG2, outline=BORDER)
+    text_center(draw, checkout, "Checkout", fonts["chip"], MUTED)
+    arrow_v(draw, cx, row_y + node_h + 2, checkout_y - 2, TRUST)
     return img
 
 
 def frame_finding(fonts: dict) -> Image.Image:
-    img = header_bar(gradient_bg(BG, DEPTH), fonts, "Finding F-001", "MAJOR · billing UI")
+    img = header_bar(gradient_bg(BG, DEPTH), fonts, "Finding F-001", "MAJOR / billing UI")
     draw = ImageDraw.Draw(img)
 
-    rounded_rect(draw, (60, 100, W - 60, 280), 18, CARD, outline=ERROR, width=2)
-    draw.rounded_rectangle((84, 124, 170, 152), radius=8, fill=ERROR)
-    draw.text((127, 138), "MAJOR", fill=TEXT, font=fonts["badge"], anchor="mm")
-    draw.text((190, 130), "Invoice count mismatch on billing dashboard", fill=TEXT, font=fonts["subtitle"])
-    draw.text(
-        (84, 175),
-        "Badge displays 4 open invoices while the table lists only 3 rows.\n"
-        "User may overpay or miss a draft invoice — arithmetic cross-check failed.",
-        fill=TEXT2,
-        font=fonts["body"],
+    card = (MARGIN, CONTENT_TOP, W - MARGIN, CONTENT_TOP + 188)
+    rounded_rect(draw, card, 14, CARD, outline=ERROR, width=2)
+    badge = (MARGIN + 16, CONTENT_TOP + 16, MARGIN + 96, CONTENT_TOP + 44)
+    rounded_rect(draw, badge, 8, ERROR)
+    text_center(draw, badge, "MAJOR", fonts["badge"], TEXT)
+
+    title = "Invoice count mismatch on billing dashboard"
+    title_font = text_fit(draw, title, fonts["section"], CONTENT_W - 130, min_size=14)
+    draw.text((MARGIN + 112, CONTENT_TOP + 18), title, fill=TEXT, font=title_font)
+
+    body_box = (MARGIN + 16, CONTENT_TOP + 52, W - MARGIN - 16, CONTENT_TOP + 118)
+    body = (
+        "Badge shows 4 open invoices; table lists 3 rows. "
+        "Arithmetic cross-check failed — user may miss a draft invoice."
     )
+    y = body_box[1]
+    for line in wrap_text(body, fonts["body"], body_box[2] - body_box[0], draw):
+        draw.text((body_box[0], y), line, fill=TEXT2, font=fonts["body"])
+        y += 22
 
-    # Severity bar diagram
-    draw.text((84, 230), "Impact", fill=MUTED, font=fonts["small"])
-    for i, (label, color, w) in enumerate([("UX", MUTED, 80), ("Trust", WARNING, 140), ("Revenue", ERROR, 200)]):
-        rounded_rect(draw, (150 + i * 210, 222, 150 + i * 210 + w, 246), 6, color)
-        draw.text((150 + i * 210, 252), label, fill=MUTED, font=fonts["label"])
+    impacts = [("UX", 72, MUTED), ("Trust", 120, WARNING), ("Revenue", 168, ERROR)]
+    bar_y = CONTENT_TOP + 132
+    draw.text((MARGIN + 16, bar_y), "Impact", fill=MUTED, font=fonts["small"])
+    bx = MARGIN + 72
+    for label, width, color in impacts:
+        rounded_rect(draw, (bx, bar_y - 2, bx + width, bar_y + 18), 5, color)
+        draw.text((bx, bar_y + 22), label, fill=MUTED, font=fonts["chip"])
+        bx += width + 20
 
-    # Finding lifecycle
-    rounded_rect(draw, (60, 310, W - 60, 500), 16, CARD, outline=BORDER)
-    draw.text((84, 332), "Finding lifecycle", fill=MINT, font=fonts["subtitle"])
-    lifecycle = ["Detected", "Evidence", "Validated", "Handoff"]
-    lx = 100
-    for i, step in enumerate(lifecycle):
-        cx = lx + i * 200
-        cy = 400
-        fill = MINT if i >= 2 else CARD_HOVER
-        draw.ellipse((cx - 28, cy - 28, cx + 28, cy + 28), fill=fill, outline=MINT, width=2)
-        draw.text((cx, cy), str(i + 1), fill=BG if i >= 2 else TEXT, font=fonts["subtitle"], anchor="mm")
-        draw.text((cx, cy + 44), step, fill=TEXT2, font=fonts["small"], anchor="mm")
-        if i < len(lifecycle) - 1:
-            arrow(draw, (cx + 32, cy), (cx + 168, cy), TRUST)
+    life = (MARGIN, CONTENT_TOP + 204, W - MARGIN, CONTENT_BOTTOM)
+    inner = panel(draw, life, "Finding lifecycle", fonts)
+    x0, y0, x1, _ = inner
+    steps = ["Detected", "Evidence", "Validated", "Handoff"]
+    n = len(steps)
+    gap = 24
+    circle = 44
+    total = n * circle + (n - 1) * gap
+    sx = x0 + (x1 - x0 - total) // 2
+    cy = y0 + 36
+    for i, step in enumerate(steps):
+        cx = sx + i * (circle + gap) + circle // 2
+        active = i >= 2
+        fill = MINT if active else CARD_HOVER
+        draw.ellipse((cx - circle // 2, cy - circle // 2, cx + circle // 2, cy + circle // 2), fill=fill, outline=MINT, width=2)
+        num_color = BG if active else TEXT
+        text_center(draw, (cx - circle // 2, cy - circle // 2, cx + circle // 2, cy + circle // 2), str(i + 1), fonts["section"], num_color)
+        label_w = circle + 24
+        text_center(draw, (cx - label_w // 2, cy + circle // 2 + 6, cx + label_w // 2, cy + circle // 2 + 30), step, fonts["small"], TEXT2)
+        if i < n - 1:
+            arrow_h(draw, cy, cx + circle // 2 + 4, cx + circle // 2 + gap - 4, TRUST)
     return img
 
 
@@ -311,45 +421,45 @@ def frame_evidence(fonts: dict) -> Image.Image:
     img = header_bar(gradient_bg(NIGHT, BG), fonts, "Evidence E-001", "confidence: HIGH")
     draw = ImageDraw.Draw(img)
 
-    # Evidence chain diagram
-    nodes = [
-        ("Screenshot", "pricing · badge + table"),
-        ("Extract", "OCR + DOM counts"),
-        ("Cross-check", "4 ≠ 3 rows"),
+    chain = [
+        ("Screenshot", "badge + table"),
+        ("Extract", "OCR + DOM"),
+        ("Cross-check", "4 vs 3"),
         ("Verdict", "reproducible"),
     ]
-    y = 130
-    for i, (title, sub) in enumerate(nodes):
-        x = 60 + i * 220
-        rounded_rect(draw, (x, y, x + 190, y + 100), 14, CARD, outline=MINT if i == 3 else BORDER, width=2)
-        draw.text((x + 95, y + 35), title, fill=MINT if i == 3 else TEXT, font=fonts["subtitle"], anchor="mm")
-        draw.text((x + 95, y + 68), sub, fill=MUTED, font=fonts["small"], anchor="mm")
-        if i < len(nodes) - 1:
-            arrow(draw, (x + 192, y + 50), (x + 218, y + 50), TRUST)
+    row_boxes(draw, chain, CONTENT_TOP, 88, fonts, accent_last=True)
 
-    # Mock screenshot panel
-    rounded_rect(draw, (60, 260, 420, 500), 14, CARD, outline=BORDER)
-    draw.text((84, 282), "Captured state", fill=MINT, font=fonts["subtitle"])
-    rounded_rect(draw, (84, 310, 396, 470), 10, BG2, outline=BORDER)
-    draw.text((240, 340), "Invoices (4)", fill=ERROR, font=fonts["subtitle"], anchor="mm")
-    for row, label in enumerate(["INV-1042", "INV-1043", "INV-1044"]):
-        rounded_rect(draw, (100, 365 + row * 32, 380, 390 + row * 32), 6, CARD)
-        draw.text((110, 377 + row * 32), label, fill=TEXT2, font=fonts["small"])
-    draw.text((240, 455), "← only 3 rows visible", fill=WARNING, font=fonts["small"], anchor="mm")
+    split_y = CONTENT_TOP + 104
+    split_h = CONTENT_BOTTOM - split_y
+    col_w = (CONTENT_W - 16) // 2
 
-    # Math diagram
-    rounded_rect(draw, (450, 260, W - 60, 500), 14, CARD, outline=TRUST, width=2)
-    draw.text((474, 282), "Arithmetic proof", fill=MINT, font=fonts["subtitle"])
+    left = (MARGIN, split_y, MARGIN + col_w, split_y + split_h)
+    inner = panel(draw, left, "Captured state", fonts)
+    x0, y0, x1, y1 = inner
+    mock = (x0, y0, x1, y1)
+    rounded_rect(draw, mock, 10, BG2, outline=BORDER)
+    text_center(draw, (x0, y0 + 8, x1, y0 + 36), "Invoices (4)", fonts["section"], ERROR)
+    for i, inv in enumerate(("INV-1042", "INV-1043", "INV-1044")):
+        row = (x0 + 8, y0 + 40 + i * 34, x1 - 8, y0 + 68 + i * 34)
+        rounded_rect(draw, row, 6, CARD)
+        draw.text((row[0] + 10, row[1] + 8), inv, fill=TEXT2, font=fonts["mono"])
+    text_center(draw, (x0, y1 - 28, x1, y1), "only 3 rows visible", fonts["small"], WARNING)
+
+    right = (MARGIN + col_w + 16, split_y, W - MARGIN, split_y + split_h)
+    inner = panel(draw, right, "Arithmetic proof", fonts, outline=TRUST)
+    x0, y0, x1, y1 = inner
     lines = [
-        "badge_count  = 4",
-        "table_rows   = 3",
-        "delta        = 1  ⚠",
-        "confidence   = HIGH",
-        "source       = screenshot + DOM",
+        ("badge_count", "= 4", TEXT2),
+        ("table_rows", "= 3", TEXT2),
+        ("delta", "= 1", ERROR),
+        ("confidence", "= HIGH", MINT),
+        ("source", "= screenshot + DOM", MUTED),
     ]
-    for i, line in enumerate(lines):
-        color = ERROR if "delta" in line else MINT if "HIGH" in line else TEXT2
-        draw.text((474, 320 + i * 32), line, fill=color, font=fonts["mono"])
+    row_h = (y1 - y0) // len(lines)
+    for i, (key, val, color) in enumerate(lines):
+        yy = y0 + i * row_h + 4
+        draw.text((x0, yy), key, fill=MUTED, font=fonts["mono"])
+        draw.text((x0 + 130, yy), val, fill=color, font=fonts["mono"])
     return img
 
 
@@ -357,37 +467,51 @@ def frame_validator(fonts: dict) -> Image.Image:
     img = header_bar(gradient_bg(BG2, NIGHT), fonts, "Validator", "deterministic PASS/FAIL")
     draw = ImageDraw.Draw(img)
 
-    # Flow: JSON → script → result
-    rounded_rect(draw, (80, 140, 260, 260), 14, CARD, outline=BORDER)
-    draw.text((170, 175), "audit-report.json", fill=TEXT, font=fonts["subtitle"], anchor="mm")
-    draw.text((170, 210), "schema v1.1", fill=MUTED, font=fonts["small"], anchor="mm")
-    draw.text((170, 235), "findings + evidence", fill=MUTED, font=fonts["small"], anchor="mm")
+    flow_y = CONTENT_TOP + 10
+    flow_h = 150
+    third = (CONTENT_W - 32) // 3
+    boxes = [
+        (MARGIN, flow_y, MARGIN + third, flow_y + flow_h),
+        (MARGIN + third + 16, flow_y, MARGIN + 2 * third + 16, flow_y + flow_h),
+        (MARGIN + 2 * third + 32, flow_y, W - MARGIN, flow_y + flow_h),
+    ]
 
-    arrow(draw, (268, 200), (320, 200), MINT)
+    rounded_rect(draw, boxes[0], 12, CARD, outline=BORDER)
+    text_center(draw, boxes[0], "audit-report.json", fonts["section"], TEXT, dy=-16)
+    text_center(draw, boxes[0], "schema v1.1", fonts["small"], MUTED, dy=8)
 
-    rounded_rect(draw, (328, 120, 632, 280), 14, BG, outline=MINT, width=2)
-    draw.text((480, 150), "$ python validate_report.py", fill=MINT, font=fonts["mono"], anchor="mm")
-    draw.text((480, 185), "✓ schema compliance", fill=TRUST, font=fonts["small"], anchor="mm")
-    draw.text((480, 210), "✓ finding IDs unique", fill=TRUST, font=fonts["small"], anchor="mm")
-    draw.text((480, 235), "✓ evidence linked", fill=TRUST, font=fonts["small"], anchor="mm")
-    draw.text((480, 260), "✓ severity enum valid", fill=TRUST, font=fonts["small"], anchor="mm")
+    rounded_rect(draw, boxes[1], 12, BG, outline=MINT, width=2)
+    text_center(draw, (boxes[1][0], boxes[1][1] + 12, boxes[1][2], boxes[1][1] + 36), "python validate_report.py", fonts["mono"], MINT)
+    checks = ["schema compliance", "finding IDs unique", "evidence linked", "severity enum valid"]
+    cy = boxes[1][1] + 48
+    for check in checks:
+        check_mark(draw, boxes[1][0] + 16, cy, TRUST)
+        draw.text((boxes[1][0] + 32, cy - 2), check, fill=TEXT2, font=fonts["small"])
+        cy += 24
 
-    arrow(draw, (640, 200), (692, 200), MINT)
+    rounded_rect(draw, boxes[2], 12, DEPTH, outline=MINT, width=2)
+    text_center(draw, boxes[2], "VALID", fonts["title"], MINT, dy=-6)
+    text_center(draw, boxes[2], "protocol v1.1", fonts["small"], TEXT2, dy=22)
 
-    rounded_rect(draw, (700, 140, 880, 260), 14, DEPTH, outline=MINT, width=3)
-    draw.text((790, 185), "VALID", fill=MINT, font=fonts["hero"], anchor="mm")
-    draw.text((790, 230), "protocol v1.1", fill=TEXT2, font=fonts["small"], anchor="mm")
+    arrow_h(draw, flow_y + flow_h // 2, boxes[0][2] + 2, boxes[1][0] - 2, MINT)
+    arrow_h(draw, flow_y + flow_h // 2, boxes[1][2] + 2, boxes[2][0] - 2, MINT)
 
-    # CI integration diagram
-    rounded_rect(draw, (60, 320, W - 60, 500), 16, CARD, outline=BORDER)
-    draw.text((84, 342), "CI · GitHub Actions", fill=MINT, font=fonts["subtitle"])
-    ci_steps = ["validate_skills.py", "routing evals (66)", "pytest (327+)", "public-safety-check"]
-    for i, step in enumerate(ci_steps):
-        x = 84 + i * 210
-        rounded_rect(draw, (x, 380, x + 190, 460), 12, BG2, outline=TRUST if i == 3 else BORDER)
-        draw.text((x + 95, 420), step, fill=TEXT2, font=fonts["small"], anchor="mm")
-        if i < len(ci_steps) - 1:
-            arrow(draw, (x + 192, 420), (x + 208, 420), MINT)
+    ci = (MARGIN, flow_y + flow_h + 24, W - MARGIN, CONTENT_BOTTOM)
+    inner = panel(draw, ci, "CI / GitHub Actions", fonts)
+    x0, y0, x1, y1 = inner
+    steps = ["validate_skills.py", "routing evals (66)", "pytest (327+)", "public-safety-check"]
+    gap = 12
+    box_w = (x1 - x0 - gap * (len(steps) - 1)) // len(steps)
+    cy = y0 + (y1 - y0 - 56) // 2
+    for i, step in enumerate(steps):
+        bx = x0 + i * (box_w + gap)
+        box = (bx, cy, bx + box_w, cy + 56)
+        outline = MINT if i == len(steps) - 1 else BORDER
+        rounded_rect(draw, box, 10, BG2, outline=outline, width=2 if i == len(steps) - 1 else 1)
+        font = text_fit(draw, step, fonts["small"], box_w - 12, min_size=10)
+        text_center(draw, box, step, font, TEXT2)
+        if i < len(steps) - 1:
+            arrow_h(draw, cy + 28, bx + box_w + 2, bx + box_w + gap - 2, TRUST)
     return img
 
 
@@ -395,39 +519,40 @@ def frame_install(fonts: dict) -> Image.Image:
     img = gradient_bg(DEPTH, BG, glow=TRUST)
     draw = ImageDraw.Draw(img)
 
-    logo = load_logo(80)
-    img.paste(logo, (W // 2 - 40, 48), logo)
-    draw.text((W // 2, 140), "Install · 12 Agent Skills", fill=TEXT, font=fonts["title"], anchor="mm")
+    logo = load_logo(64)
+    img.paste(logo, (W // 2 - 32, 28), logo)
+    draw.text((W // 2, 108), "Install 12 Agent Skills", fill=TEXT, font=fonts["title"], anchor="mm")
 
-    # Skill constellation diagram
     skills = [
         "Evidence", "Competitive", "Teardown", "Design Partner",
-        "Repo→Roadmap", "Product Op", "Customer Ops", "Web Auditor",
-        "SEO/AEO", "Release", "AI Council", "Humanize",
+        "Repo to Roadmap", "Product Operator", "Customer Ops", "Web Auditor",
+        "SEO / AEO", "Release Readiness", "AI Council", "Humanize",
     ]
-    cx, cy, r = W // 2, 290, 150
+    grid = (MARGIN, 132, W - MARGIN, 388)
+    cols, rows = 4, 3
+    gap_x, gap_y = 12, 12
+    cell_w = (grid[2] - grid[0] - gap_x * (cols - 1)) // cols
+    cell_h = (grid[3] - grid[1] - gap_y * (rows - 1)) // rows
     for i, name in enumerate(skills):
-        angle = -math.pi / 2 + i * (2 * math.pi / len(skills))
-        sx = int(cx + r * math.cos(angle))
-        sy = int(cy + r * math.sin(angle))
-        w = max(88, int(draw.textlength(name, font=fonts["label"])) + 20)
-        rounded_rect(draw, (sx - w // 2, sy - 16, sx + w // 2, sy + 16), 10, CARD, outline=MINT if "Auditor" in name else BORDER)
-        draw.text((sx, sy), name, fill=MINT if "Auditor" in name else TEXT2, font=fonts["label"], anchor="mm")
-        draw.line([(cx, cy), (sx, sy)], fill=(*TRUST, 80), width=1)
+        col = i % cols
+        row = i // cols
+        x = grid[0] + col * (cell_w + gap_x)
+        y = grid[1] + row * (cell_h + gap_y)
+        box = (x, y, x + cell_w, y + cell_h)
+        highlight = "Auditor" in name
+        rounded_rect(draw, box, 10, CARD, outline=MINT if highlight else BORDER, width=2 if highlight else 1)
+        font = text_fit(draw, name, fonts["chip"], cell_w - 12, min_size=9)
+        text_center(draw, box, name, font, MINT if highlight else TEXT2)
 
-    draw.ellipse((cx - 36, cy - 36, cx + 36, cy + 36), fill=DEPTH, outline=MINT, width=2)
-    draw.text((cx, cy), "CW-AIP", fill=MINT, font=fonts["badge"], anchor="mm")
+    hub = (W // 2 - 52, 404, W // 2 + 52, 428)
+    rounded_rect(draw, hub, 12, DEPTH, outline=MINT, width=2)
+    text_center(draw, hub, "CW-AIP handoffs", fonts["chip"], MINT)
 
-    cmd_box = (120, 430, W - 120, 490)
-    rounded_rect(draw, cmd_box, 14, CARD, outline=MINT, width=2)
-    draw.text(
-        (W // 2, 460),
-        "git clone …/agent-skills && ./scripts/install-cursor.sh",
-        fill=MINT,
-        font=fonts["mono"],
-        anchor="mm",
-    )
-    draw.text((W // 2, H - 22), "CometWeb Labs · MIT · cometweb.io", fill=MUTED, font=fonts["small"], anchor="mm")
+    cmd = (MARGIN + 40, 444, W - MARGIN - 40, 492)
+    rounded_rect(draw, cmd, 14, CARD, outline=MINT, width=2)
+    text_center(draw, cmd, "./scripts/install-cursor.sh", fonts["mono"], MINT)
+
+    draw.text((W // 2, H - 18), "CometWeb Labs  |  MIT  |  cometweb.io", fill=MUTED, font=fonts["small"], anchor="mm")
     return img
 
 
@@ -443,22 +568,22 @@ def build_frames(fonts: dict) -> list[Image.Image]:
     ]
 
 
-def main() -> None:
+def ensure_assets() -> None:
     ASSETS.mkdir(parents=True, exist_ok=True)
-    OUT.mkdir(parents=True, exist_ok=True)
-
     fonts_dir = ROOT.parent / "cometweb-io" / "static" / "fonts"
     for name in ("nunito-sans-regular.ttf", "nunito-sans-600.ttf", "nunito-sans-700.ttf"):
-        src = fonts_dir / name
-        dst = ASSETS / name
+        src, dst = fonts_dir / name, ASSETS / name
         if src.exists() and not dst.exists():
             dst.write_bytes(src.read_bytes())
-
     logo_src = ROOT.parent / "cometweb-io" / "static" / "logo.svg"
     logo_dst = ASSETS / "cometweb-logo.svg"
     if logo_src.exists() and not logo_dst.exists():
         logo_dst.write_bytes(logo_src.read_bytes())
 
+
+def main() -> None:
+    ensure_assets()
+    OUT.mkdir(parents=True, exist_ok=True)
     fonts = load_fonts()
     images = build_frames(fonts)
 
@@ -467,7 +592,7 @@ def main() -> None:
         gif_path,
         save_all=True,
         append_images=images[1:],
-        duration=2200,
+        duration=2400,
         loop=0,
         optimize=True,
     )

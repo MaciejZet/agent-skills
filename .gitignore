@@ -6,6 +6,7 @@
 __pycache__/
 dist/
 docs/demo/frame-*.png
+docs/demo/preview/
 *.py[cod]
 .cursor/hooks/state/
 **/notion-bindings.local.json
