@@ -119,11 +119,13 @@ def frame_hero(fonts: dict) -> Image.Image:
     draw.text((W // 2, 278), "Web App Auditor", fill=TEXT2, font=fonts["title"], anchor="mm")
     draw.text((W // 2, 318), "Evidence-driven QA for agents", fill=MUTED, font=fonts["body"], anchor="mm")
 
-    pill = (MARGIN + 80, 356, W - MARGIN - 80, 396)
+    pill_top = 348
+    pill_h = 44
+    pill = (MARGIN + 80, pill_top, W - MARGIN - 80, pill_top + pill_h)
     rounded_rect(draw, pill, 16, CARD, outline=TRUST, width=2)
     text_center(draw, pill, "12 skills · protocol v1.1 · pytest + CI", fonts["small"], MINT)
 
-    draw.text((W // 2, CONTENT_BOTTOM - 8), "github.com/MaciejZet/agent-skills", fill=MUTED, font=fonts["small"], anchor="mm")
+    draw.text((W // 2, pill_top + pill_h + 28), "github.com/MaciejZet/agent-skills", fill=MUTED, font=fonts["small"], anchor="mm")
     return img
 
 
