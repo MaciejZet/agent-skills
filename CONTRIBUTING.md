@@ -28,6 +28,17 @@ python3 scripts/run_routing_evals.py
 ./scripts/run_all_tests.sh
 ```
 
+Before tagging a release, also run the history pass:
+
+```bash
+./scripts/public-safety-check.sh --history
+```
+
+It applies the same leak rules to every commit ever made, not just the working
+tree. It is not part of CI, because a file removed from `HEAD` stays in history
+until someone rewrites it — so this check reports the known 2026-08-26 incident
+and will keep doing so until that rewrite happens.
+
 ## Skill quality bar (vs typical prompt repos)
 
 | Expectation | CometWeb bar |

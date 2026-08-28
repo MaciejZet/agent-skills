@@ -203,7 +203,8 @@ Example chains the protocol supports:
 
 ```bash
 ./scripts/run_all_checks.sh           # safety + validate + routing + pytest + release_check
-./scripts/public-safety-check.sh    # no leaked Notion IDs in OSS tree
+./scripts/public-safety-check.sh    # leak gate: secrets, Linear/Notion IDs, private paths
+./scripts/public-safety-check.sh --history   # same rules across every commit ever made
 python3 scripts/validate_skills.py    # metadata + routing suite shape
 python3 scripts/run_routing_evals.py  # 75 routing cases
 ./scripts/run_all_tests.sh            # 332+ unit tests across skills
