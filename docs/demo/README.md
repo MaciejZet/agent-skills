@@ -5,7 +5,7 @@ Public demo for GitHub README and social posts (no GTM strategy here).
 > **Rule:** everything in this directory ends up on the public internet. Demo
 > artifacts must be generated from fixtures or public data — never from a dump of
 > a live workspace. On 2026-08-26 eight `linear-*` files were committed here
-> containing 40 real Linear issues with working `linear.app` URLs and an absolute
+> containing 40 real Linear issues with working issue-tracker URLs and an absolute
 > path from a developer machine. They were removed from `HEAD` on 2026-08-28 and
 > `scripts/public-safety-check.sh` was rewritten to catch that class of file, but
 > they remain in git history until it is rewritten. Treat anything published here
