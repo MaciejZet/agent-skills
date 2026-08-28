@@ -1,6 +1,18 @@
 # Install CometWeb Agent Skills
 
-Twelve standalone skills for **Cursor**, **Claude Code**, **ChatGPT**, **Codex**, and compatible hosts, plus **Skill Orchestrator** (single thread) and **Skill Orchestrator Multiagent** (Task per step).
+Fourteen standalone skills for **Cursor**, **Claude Code**, **ChatGPT**, **Codex**, and compatible hosts, including **Skill Orchestrator** (single thread) and **Skill Orchestrator Multiagent** (Task per step).
+
+## Quick install (Claude Code plugin marketplace)
+
+The shortest path — nothing to clone, and `/plugin update` keeps it current:
+
+```text
+/plugin marketplace add MaciejZet/agent-skills
+/plugin install cometweb-agent-skills@cometweb-agent-skills
+```
+
+Restart Claude Code or start a new session. Prefer a symlinked clone if you intend to
+edit the skills locally — see below.
 
 ## Quick install (Cursor)
 

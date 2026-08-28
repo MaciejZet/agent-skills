@@ -1,9 +1,12 @@
-# CometWeb Agent Skills
+# Agent Skills for Claude Code, Cursor and Codex
 
-Twelve specialist skills from [CometWeb Labs](https://cometweb.io), plus **Skill Orchestrator**
-(single thread) and **Skill Orchestrator Multiagent** (one subagent per step). Each folder
-under `skills/` ships a `SKILL.md` entrypoint plus scripts, schemas, and tests where a claim
-must hold in code—not only in prose.
+Fourteen specialist skills for research, product operations, QA, release gates and
+strategic decisions — from [CometWeb Labs](https://cometweb.io), MIT-licensed.
+
+Most skill collections are folders of prompts. These ship with CI, **336 unit tests**
+and a **75-case routing eval suite**, because a skill whose job is to check something
+has to be checked itself. Fourteen skills that pass their own tests, rather than a
+catalogue of hundreds that nobody runs.
 
 [![CI](https://github.com/MaciejZet/agent-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/MaciejZet/agent-skills/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/MaciejZet/agent-skills?label=release)](https://github.com/MaciejZet/agent-skills/releases/latest)
@@ -11,9 +14,33 @@ must hold in code—not only in prose.
 
 ![Web App Auditor demo](docs/demo/web-app-auditor-demo.gif)
 
+## What is an agent skill?
+
+A skill is a folder with a `SKILL.md` entrypoint that an AI coding agent loads when the
+task matches its description. It carries the instructions — and usually scripts and
+schemas — for one kind of work, so the agent follows a defined procedure instead of
+improvising one. Claude Code, Cursor and Codex each read skills from their own
+directory; [`INSTALL.md`](INSTALL.md) covers all three plus ChatGPT.
+
+What separates one collection from another is whether that procedure actually holds.
+Here every behavioural claim a skill makes is covered by a test, and routing between
+skills is measured against 75 labelled cases instead of assumed:
+
+```bash
+./scripts/run_all_tests.sh            # 336 unit tests across 14 skills
+python3 scripts/run_routing_evals.py  # 75 routing cases
+```
+
 ## Start here
 
-1. **Install** — [`INSTALL.md`](INSTALL.md): Cursor, Claude Code, or ZIP from [Releases](https://github.com/MaciejZet/agent-skills/releases/latest)
+Claude Code, in two lines — no clone:
+
+```text
+/plugin marketplace add MaciejZet/agent-skills
+/plugin install cometweb-agent-skills@cometweb-agent-skills
+```
+
+1. **Install** — [`INSTALL.md`](INSTALL.md): the plugin marketplace above, Cursor, Codex, or a ZIP from [Releases](https://github.com/MaciejZet/agent-skills/releases/latest)
 2. **First skill** — `@web-app-auditor` (evidence-backed QA; smallest useful demo)
 3. **Questions** — [GitHub Discussions](https://github.com/MaciejZet/agent-skills/discussions)
 
@@ -21,7 +48,7 @@ Sample audit report: [`docs/demo/sample-audit-report.json`](docs/demo/sample-aud
 
 ## Architecture
 
-Twelve skills that can run alone, but share one evidence and handoff model (CW-AIP v1).
+Fourteen skills that can run alone, but share one evidence and handoff model (CW-AIP v1).
 Typical flow:
 
 ```text
@@ -207,7 +234,7 @@ Example chains the protocol supports:
 ./scripts/public-safety-check.sh --history   # same rules across every commit ever made
 python3 scripts/validate_skills.py    # metadata + routing suite shape
 python3 scripts/run_routing_evals.py  # 75 routing cases
-./scripts/run_all_tests.sh            # 332+ unit tests across skills
+./scripts/run_all_tests.sh            # 336 unit tests across skills
 ```
 
 Per-skill tools live under `skills/<name>/scripts/`. Bundle releases:
