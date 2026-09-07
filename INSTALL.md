@@ -47,6 +47,29 @@ cd agent-skills
 
 Symlinks all skills to `~/.codex/skills/`. Existing CometWeb skill **directories** there are replaced with symlinks to the repo. Restart Codex or start a new session.
 
+## Optional design stack: Impeccable + frontend-design + UI UX Pro Max
+
+To install this repository together with the external frontend/design skills used alongside it:
+
+```bash
+# Codex
+bash scripts/install-design-stack.sh codex
+
+# Claude Code
+bash scripts/install-design-stack.sh claude
+
+# Cursor
+bash scripts/install-design-stack.sh cursor
+```
+
+For project-aware setup (Impeccable project hooks + UI UX Pro Max initialization):
+
+```bash
+bash scripts/install-design-stack.sh codex --project /path/to/project
+```
+
+The external projects stay upstream rather than being vendored into this repository. See [`docs/design-skill-stack.md`](docs/design-skill-stack.md) for routing, overlap and update behavior.
+
 ## CometWeb centrum (Claude relative paths)
 
 ```bash
