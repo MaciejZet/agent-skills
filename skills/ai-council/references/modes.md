@@ -2,10 +2,14 @@
 
 Tryb kontroluje koszt deliberacji, nie prestiż problemu. `mode_budget()` jest źródłem prawdy.
 
-## FAST
+Alias produktowy w `SKILL.md`: `LIGHT` ≈ `FAST`, `STANDARD`, `DEEP`.
+
+## FAST / LIGHT
 
 Dla małej, odwracalnej decyzji o niskim ryzyku.
 
+- Decision Contract + 2–3 perspektywy + evidence sanity + key risks.
+- Verdict: `GO` / `TEST` / `DEFER` (bez forecasting, portfolio, living-decision machinery).
 - 3 advisers.
 - Do 1 specialist.
 - Do 2 gatekeepers, jeśli risk surface ich wymaga.

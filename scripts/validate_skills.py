@@ -12,6 +12,7 @@ SKILLS = ROOT / "skills"
 EVALS = ROOT / "evals" / "routing" / "suite.json"
 SKILL_NAMES = {
     "ai-council",
+    "cometweb-context",
     "ai-humanize",
     "competitive-intelligence",
     "customer-ops",

@@ -6,6 +6,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 TARGET="${CURSOR_SKILLS_DIR:-$HOME/.cursor/skills}"
 SKILLS=(
   ai-council
+  cometweb-context
   ai-humanize
   competitive-intelligence
   customer-ops

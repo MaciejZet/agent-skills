@@ -17,11 +17,23 @@ Prowadź Radę jako **temporal decision intelligence system**, nie panel person.
 6. Dla internal claims wybieraj system-of-record, nie najwygodniejszy dokument.
 7. `GO` nie jest autoryzacją do wykonania side effect. Dla T3/T4 użyj human approval.
 
+## Profile kosztu poznawczego
+
+Wybierz najmniejszy profil, który chroni decyzję. Szczegóły budżetów: `references/modes.md`.
+
+| Profile | Kiedy | Ścieżka |
+| --- | --- | --- |
+| `LIGHT` | mała, odwracalna decyzja; użytkownik chce szybki sanity check | Decision Contract → 2–3 perspektywy → evidence sanity → key risks → `GO` / `TEST` / `DEFER` (bez forecasting/portfolio/living-decision machinery) |
+| `STANDARD` | domyślny dla materialnych decyzji | blind round → evidence/falsifier → gates → minority → Decision Snapshot |
+| `DEEP` | wysoki lock-in, regulacja, multi-system | pełny workflow poniżej (forecasting, portfolio, living decision, champion/challenger) |
+
+Nie ładuj DEEP cognitive path dla LIGHT. Kernel `plan` nadal wybiera tryb, jeśli użytkownik go nie wymusi.
+
 ## Workflow decyzji
 
 1. Ustal dokładne `as_of` w lokalnej strefie użytkownika i zbuduj canonical Decision Contract przez `contract`. Uzupełnij tylko znane dane. Przeczytaj `references/decision-contract.md`.
 2. Dla materialnych internal claims uruchom `context-route`; wybierz system-of-record według `references/internal-context.md`.
-3. Uruchom `plan`. Kernel wybiera `Council Mode`, budżet, role, frameworki, critical evidence areas i wymagane temporal stages, chyba że użytkownik wymusi tryb.
+3. Uruchom `plan`. Kernel wybiera `Council Mode` (`LIGHT`≈FAST, `STANDARD`, `DEEP`), budżet, role, frameworki, critical evidence areas i wymagane temporal stages, chyba że użytkownik wymusi tryb. Dla `LIGHT` przejdź skróconą ścieżkę z tabeli powyżej i pomiń kroki forecasting/portfolio/living-decision chyba że risk surface wymusi gate.
 4. Jeśli archetyp ma sensowne historyczne analogie, zbuduj outside view przez `base-rate` **bez czytania historycznych verdictów blind ekspertom**. Base rate jest priorem dla późniejszej syntezy, nie informacją dla blind round.
 5. Pobierz prywatną wiedzę per role/capability pack. Użyj `references/knowledge-routing.md` i `references/capability-packs.md`.
 6. Wykonaj blind round adviserów i relewantnych specialistów. Nie odczytuj Decision Memory przed zakończeniem wszystkich blind memos.

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import json
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
@@ -50,7 +51,7 @@ def run(data, as_of="2026-08-25"):
     with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8") as f:
         json.dump(data, f)
         path = f.name
-    proc = subprocess.run(["python", str(SCRIPT), path, "--as-of", as_of], capture_output=True, text=True)
+    proc = subprocess.run([sys.executable, str(SCRIPT), path, "--as-of", as_of], capture_output=True, text=True)
     Path(path).unlink(missing_ok=True)
     return proc
 
