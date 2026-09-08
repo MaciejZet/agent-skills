@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import json
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
@@ -16,13 +17,13 @@ def call(args):
 
 
 def test_template_full_is_complete_and_scoreable():
-    p = call(["python", str(BUILD), "--mode", "FULL"])
+    p = call([sys.executable, str(BUILD), "--mode", "FULL"])
     assert p.returncode == 0, p.stderr
     audit = json.loads(p.stdout)
     assert len(audit["checks"]) == 41
     with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8") as f:
         json.dump(audit, f); path = f.name
-    scored = call(["python", str(SCORE), path, "--as-of", "2026-08-25"])
+    scored = call([sys.executable, str(SCORE), path, "--as-of", "2026-08-25"])
     Path(path).unlink(missing_ok=True)
     assert scored.returncode == 0, scored.stderr
     out = json.loads(scored.stdout)
@@ -31,7 +32,7 @@ def test_template_full_is_complete_and_scoreable():
 
 
 def test_template_surface_scope_marks_other_platform_checks_na():
-    p = call(["python", str(BUILD), "--mode", "PILLAR", "--pillars", "geo", "--surfaces", "google-ai-search"])
+    p = call([sys.executable, str(BUILD), "--mode", "PILLAR", "--pillars", "geo", "--surfaces", "google-ai-search"])
     assert p.returncode == 0, p.stderr
     audit = json.loads(p.stdout)
     rows = {r["id"]: r for r in audit["checks"]}
@@ -41,18 +42,18 @@ def test_template_surface_scope_marks_other_platform_checks_na():
 
 
 def test_pillar_template_requires_pillars():
-    p = call(["python", str(BUILD), "--mode", "PILLAR"])
+    p = call([sys.executable, str(BUILD), "--mode", "PILLAR"])
     assert p.returncode != 0
 
 
 def test_freshness_strict_current_stale_and_future():
-    fresh = call(["python", str(FRESH), "--as-of", "2026-08-25", "--strict"])
+    fresh = call([sys.executable, str(FRESH), "--as-of", "2026-08-25", "--strict"])
     assert fresh.returncode == 0, fresh.stderr
-    stale = call(["python", str(FRESH), "--as-of", "2026-10-01", "--groups", "openai_search", "--strict"])
+    stale = call([sys.executable, str(FRESH), "--as-of", "2026-10-01", "--groups", "openai_search", "--strict"])
     assert stale.returncode == 1
     out = json.loads(stale.stdout)
     assert out["has_stale"] is True and out["has_issue"] is True
-    future = call(["python", str(FRESH), "--as-of", "2026-08-01", "--groups", "openai_search", "--strict"])
+    future = call([sys.executable, str(FRESH), "--as-of", "2026-08-01", "--groups", "openai_search", "--strict"])
     assert future.returncode == 1
     fout = json.loads(future.stdout)
     assert fout["groups"][0]["state"] == "future" and fout["has_issue"] is True
@@ -81,7 +82,7 @@ def run_compare(a, b, kind="delta"):
     for data in [a, b]:
         f = tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8")
         json.dump(data, f); f.close(); paths.append(f.name)
-    p = call(["python", str(COMPARE), paths[0], paths[1], "--kind", kind])
+    p = call([sys.executable, str(COMPARE), paths[0], paths[1], "--kind", kind])
     for path in paths: Path(path).unlink(missing_ok=True)
     return p
 

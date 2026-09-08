@@ -1,0 +1,106 @@
+{
+  "schema": "cometweb.source-registry/v1",
+  "notes": "Machine-readable bindings for cometweb-context. Paths are relative to $COMETWEB_ROOT / $COMETWEB_CENTRUM when local access exists. Skills must discover live connectors at runtime — do not hard-code MCP tool names. Live customer bindings stay outside git.",
+  "authority_levels": [
+    "system_of_record",
+    "canonical",
+    "primary",
+    "secondary",
+    "fallback"
+  ],
+  "profiles": {
+    "product": {
+      "preferred_source_groups": [
+        "repo",
+        "insight",
+        "vault-status",
+        "vault-first-principles"
+      ]
+    },
+    "gtm": {
+      "preferred_source_groups": [
+        "vault-decisions",
+        "vault-first-principles",
+        "vault-topic",
+        "website"
+      ]
+    },
+    "outreach": {
+      "preferred_source_groups": [
+        "crm",
+        "communications",
+        "vault-icp-sop",
+        "prospect-web"
+      ]
+    },
+    "brand": {
+      "preferred_source_groups": [
+        "vault-brand",
+        "evidence-register",
+        "public-profiles",
+        "website"
+      ]
+    },
+    "meeting": {
+      "preferred_source_groups": [
+        "calendar",
+        "contacts",
+        "crm-or-communications",
+        "relevant-docs"
+      ]
+    },
+    "weekly": {
+      "preferred_source_groups": [
+        "repo",
+        "insight",
+        "vault",
+        "crm",
+        "notion",
+        "communications",
+        "website",
+        "public-profiles"
+      ]
+    },
+    "claim-verification": {
+      "preferred_source_groups": [
+        "evidence-register",
+        "primary-claim-source",
+        "publication-surface"
+      ]
+    },
+    "custom": {
+      "preferred_source_groups": []
+    }
+  },
+  "domains": {
+    "product": {
+      "hierarchy": [
+        "pinned release/CI artifact",
+        "github head",
+        "local checkout",
+        "docs/notion intent"
+      ]
+    },
+    "governance": {
+      "bindings": [
+        {
+          "id": "first-principles",
+          "role": "canonical_decision_input",
+          "local_path_template": "<set-via-local-binding:first-principles>",
+          "decision_alias": "<internal-alias>",
+          "alias_map_template": "<set-via-local-binding:first-principles>",
+          "note": "Retrieve when material new decision; never allocate decisions from context skill"
+        }
+      ]
+    },
+    "crm": {
+      "system_of_record": "twenty-or-hubspot-via-available-connector",
+      "on_unavailable": "authority_gap"
+    },
+    "claims": {
+      "evidence_register_template": "<set-via-local-binding:evidence-register>",
+      "public_use_gate": true
+    }
+  },
+  "repo_registry_file": "references/repos.txt"
+}
