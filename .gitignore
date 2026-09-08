@@ -10,3 +10,6 @@ docs/demo/preview/
 *.py[cod]
 .cursor/hooks/state/
 **/notion-bindings.local.json
+
+# Grok seed (large; keep local)
+site/_source-grok-workspace.zip
