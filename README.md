@@ -1,11 +1,11 @@
 # Agent Skills for Claude Code, Cursor and Codex
 
-Fourteen specialist skills for research, product operations, QA, release gates and
+Fifteen specialist skills for research, product operations, QA, release gates and
 strategic decisions — from [CometWeb Labs](https://cometweb.io), MIT-licensed.
 
-Most skill collections are folders of prompts. These ship with CI, **336 unit tests**
-and a **75-case routing eval suite**, because a skill whose job is to check something
-has to be checked itself. Fourteen skills that pass their own tests, rather than a
+Most skill collections are folders of prompts. These ship with CI, **353 unit tests**
+and a **103-case routing eval suite**, because a skill whose job is to check something
+has to be checked itself. Fifteen skills that pass their own tests, rather than a
 catalogue of hundreds that nobody runs.
 
 [![CI](https://github.com/MaciejZet/agent-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/MaciejZet/agent-skills/actions/workflows/ci.yml)
@@ -24,11 +24,11 @@ directory; [`INSTALL.md`](INSTALL.md) covers all three plus ChatGPT.
 
 What separates one collection from another is whether that procedure actually holds.
 Here every behavioural claim a skill makes is covered by a test, and routing between
-skills is measured against 75 labelled cases instead of assumed:
+skills is measured against 103 labelled cases instead of assumed:
 
 ```bash
-./scripts/run_all_tests.sh            # 336 unit tests across 14 skills
-python3 scripts/run_routing_evals.py  # 75 routing cases
+./scripts/run_all_tests.sh            # 353 unit tests across 15 skills
+python3 scripts/run_routing_evals.py  # 103 routing cases
 ```
 
 ## Start here
@@ -48,10 +48,15 @@ Sample audit report: [`docs/demo/sample-audit-report.json`](docs/demo/sample-aud
 
 ## Architecture
 
-Fourteen skills that can run alone, but share one evidence and handoff model (CW-AIP v1).
-Typical flow:
+Fifteen skills that can run alone, but share one evidence and handoff model
+(CW-AIP v1 + v2). Typical flow:
 
 ```text
+                         CONTEXT (optional preflight)
+                ┌─────────────────────┐
+                │  CometWeb Context   │ → ContextEnvelope
+                └──────────┬──────────┘
+                           │
                          EVIDENCE
                 ┌─────────────────────┐
                 │ Evidence Researcher │
@@ -105,12 +110,13 @@ gates to what they accept from an Evidence Pack.
 
 | Mechanism | What it does |
 | --- | --- |
-| **`@skill-orchestrator`** | Multi-step flow in **one thread** (same agent, sequential SKILL.md) |
-| **`@skill-orchestrator-multiagent`** | Same plan, but **one subagent per skill** (Cursor Task) — parent only merges |
+| **`@skill-orchestrator`** | Multi-step flow with `execution_mode`: auto / single_thread / isolated_subagents |
+| **`@skill-orchestrator-multiagent`** | Thin alias for `execution_mode=isolated_subagents` |
+| **`@cometweb-context`** | Provenance-aware context snapshot (ContextEnvelope) before domain work |
 | **Routing rule** (`install-cursor.sh`) | Maps intent from plain chat when you skip `@` tags |
 | **Single specialist** | `@web-app-auditor`, `@product-operator`, … when one domain is enough |
 | **Evidence Researcher alone** | Evidence Pack only — no GO/NO-GO, no auto-Council |
-| **AI Council alone** | Explicit decision — re-verifies evidence even after research |
+| **AI Council alone** | Explicit decision — LIGHT / STANDARD / DEEP profiles |
 
 Example — one tag, full strategic flow:
 
@@ -118,12 +124,13 @@ Example — one tag, full strategic flow:
 @skill-orchestrator — Verify our pricing claims, then Council on GO/NO-GO for the new tier.
 ```
 
-## Skills (14)
+## Skills (15)
 
 | Layer | Skill | Role |
 | --- | --- | --- |
-| Orchestration | [Skill Orchestrator](skills/skill-orchestrator) | Multi-skill sequences in one thread with CW-AIP handoffs |
-| Orchestration | [Skill Orchestrator Multiagent](skills/skill-orchestrator-multiagent) | One isolated subagent (Task) per specialist; parent plans/merges only |
+| Foundation | [CometWeb Context](skills/cometweb-context) | Read-only provenance-aware context gateway → ContextEnvelope |
+| Orchestration | [Skill Orchestrator](skills/skill-orchestrator) | Multi-skill sequences with CW-AIP handoffs (`execution_mode`) |
+| Orchestration | [Skill Orchestrator Multiagent](skills/skill-orchestrator-multiagent) | Alias for isolated_subagents; parent plans/merges only |
 | Evidence | [Evidence Researcher](skills/evidence-researcher) | Atomic claims, source lineage, falsifiers, freshness; Evidence Pack output; no decisions |
 | Intelligence | [Competitive Intelligence](skills/competitive-intelligence) | Observation → normalized state → delta → implication; resists headline overreach |
 | Intelligence | [Product Teardown](skills/product-teardown) | Transferable patterns from external products; ADOPT requires destination-side evidence |
@@ -134,7 +141,7 @@ Example — one tag, full strategic flow:
 | Quality | [Web App Auditor](skills/web-app-auditor) | Click-through QA with findings, evidence, and a validated report schema |
 | Quality | [SEO GEO AEO Maxxing](skills/seo-geo-aeo-maxxing) | Live-verified search and AI-surface visibility audits |
 | Release | [Release Readiness](skills/release-readiness) | Pinned RC/build + environment → GO / NO_GO / DEFER; score cannot override gates |
-| Decision | [AI Council](skills/ai-council) | Multi-expert material decisions; **explicit invocation only** |
+| Decision | [AI Council](skills/ai-council) | Multi-expert material decisions; **explicit invocation only** (LIGHT/STANDARD/DEEP) |
 | Writing | [AI Humanize](skills/ai-humanize) | EN/PL prose editing with semantic-fidelity and invariant guards |
 
 ### Routing: three skills people confuse
@@ -146,7 +153,7 @@ Example — one tag, full strategic flow:
 | Is **this build/RC** safe to ship to **this environment**? | **Release Readiness** | Requires pinned artifact + environment; gate verdict |
 
 Ambiguous prompts like “analyze the repo for production readiness” are covered in
-[`evals/routing/suite.json`](evals/routing/suite.json) (75 cases). Run:
+[`evals/routing/suite.json`](evals/routing/suite.json) (103 cases). Run:
 
 ```bash
 python3 scripts/run_routing_evals.py
